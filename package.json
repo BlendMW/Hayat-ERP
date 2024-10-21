@@ -4,6 +4,17 @@
   },
   "dependencies": {
     "@aws-amplify/core": "^6.4.5",
-    "@aws-amplify/ui-react": "^6.5.4"
+    "@aws-amplify/ui-react": "^6.5.4",
+    "aws-amplify": "^6.6.6"
+  },
+  "devDependencies": {
+    "@aws-amplify/backend": "^1.5.0",
+    "@aws-amplify/backend-cli": "^1.2.9",
+    "aws-cdk": "^2.162.1",
+    "aws-cdk-lib": "^2.162.1",
+    "constructs": "^10.4.2",
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
   }
 }
