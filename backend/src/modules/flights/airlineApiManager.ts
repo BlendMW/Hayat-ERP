@@ -2,6 +2,16 @@ import { ApiFactory } from './apiFactory';
 import { StandardizedFlight, RawFlight, FlightSearchParams, FlightStatus, APIConnection, Supplier } from './types';
 import { logger } from '../utils/logger';
 import { apiConfigs } from './apiConfigs';
+import { AirlineApi } from './airlineApis/airlineApi';
+import { IraqiAirwaysApi } from './airlineApis/iraqiAirwaysApi';
+import { AirArabiaApi } from './airlineApis/airArabiaApi';
+import { QatarAirwaysApi } from './airlineApis/qatarAirwaysApi';
+import { RoyalJordanianApi } from './airlineApis/royalJordanianApi';
+import { EgyptAirApi } from './airlineApis/egyptAirApi';
+import { MiddleEastAirlinesApi } from './airlineApis/middleEastAirlinesApi';
+import { TurkishAirlinesApi } from './airlineApis/turkishAirlinesApi';
+import { UrAirlinesApi } from './airlineApis/urAirlinesApi';
+import { SabreApi } from './airlineApis/sabreApi';
 
 export class AirlineApiManager {
   private apiConnections: Map<string, APIConnection>;

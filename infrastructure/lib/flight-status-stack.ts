@@ -6,10 +6,26 @@ import * as logs from '@aws-cdk/aws-logs';
 import * as sqs from '@aws-cdk/aws-sqs';
 import * as lambdaEventSources from '@aws-cdk/aws-lambda-event-sources';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import * as amplify from '@aws-cdk/aws-amplify';
 
 export class FlightStatusStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // Create an Amplify App
+    const amplifyApp = new amplify.App(this, 'FlightStatusApp', {
+      sourceCodeProvider: new amplify.GitHubSourceCodeProvider({
+        owner: '<your-github-username>',
+        repository: '<your-repo-name>',
+        oauthToken: cdk.SecretValue.secretsManager('github-token'),
+      }),
+      environmentVariables: {
+        // Add any environment variables your app needs
+      },
+    });
+
+    // Add a branch
+    amplifyApp.addBranch('main');
 
     const logGroup = new logs.LogGroup(this, 'FlightStatusLogGroup', {
       logGroupName: '/aws/lambda/flight-status',

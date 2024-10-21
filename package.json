@@ -1,9 +1,5 @@
 {
-  "scripts": {
-    "build": "react-scripts build"
-  },
   "dependencies": {
-    "@aws-amplify/core": "^6.4.5",
-    "@aws-amplify/ui-react": "^6.5.4"
+    "aws-amplify": "^6.6.5"
   }
 }
