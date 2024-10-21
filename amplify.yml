@@ -1,16 +1,25 @@
 version: 1
+backend:
+  phases:
+    preBuild:
+      commands:
+        - npm install # or yarn install
+    build:
+      commands:
+        - echo "Backend-only build - no frontend"
 frontend:
   phases:
     preBuild:
       commands:
-        - npm install
+        - echo "No frontend to build"
     build:
       commands:
-        - npm run build
+        - echo "Skipping frontend build"
   artifacts:
-    baseDirectory: build
+    # No frontend artifacts
+    baseDirectory: /
     files:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/*
+      - node_modules/**/* # Cache dependencies
