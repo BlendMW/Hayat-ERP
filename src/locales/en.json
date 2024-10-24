@@ -18,8 +18,13 @@
     "loading": "Loading flights...",
     "noFlights": "No flights available",
     "error": {
-      "fetchFailed": "Failed to fetch flights. Please try again."
-    }
+      "fetchFailed": "Failed to fetch flights. Please try again.",
+      "metaSearchFailed": "Failed to perform meta-search. Please try again."
+    },
+    "internalResults": "Our Flights",
+    "externalResults": "Partner Flights",
+    "provider": "Provider",
+    "bookExternally": "Book on Partner Site"
   },
   "booking": {
     "title": "Book Flight",
@@ -29,7 +34,8 @@
     "loading": "Processing booking...",
     "error": {
       "priceFailed": "Failed to calculate price. Please try again.",
-      "bookingFailed": "Failed to create booking. Please try again."
+      "bookingFailed": "Failed to create booking. Please try again.",
+      "insufficientCredit": "Insufficient credit to complete this booking. Please contact your administrator."
     }
   },
   "admin": {
@@ -38,7 +44,9 @@
       "sourcesTitle": "Available Sources",
       "error": {
         "fetchFailed": "Failed to fetch flight sources. Please try again."
-      }
+      },
+      "priorityTitle": "Flight Source Priorities",
+      "updateFailed": "Failed to update flight source priority"
     },
     "sourcePriorities": {
       "title": "Source Priorities",
@@ -50,7 +58,45 @@
     },
     "loading": "Loading...",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "externalProviders": {
+      "title": "External Providers",
+      "active": "Active",
+      "error": {
+        "fetchFailed": "Failed to fetch external providers. Please try again.",
+        "createFailed": "Failed to create external provider. Please try again.",
+        "updateFailed": "Failed to update external provider. Please try again."
+      }
+    },
+    "tenant": {
+      "title": "Tenant Branding and Configuration",
+      "name": "Tenant Name",
+      "domain": "Domain",
+      "logo": "Logo URL",
+      "primaryColor": "Primary Color",
+      "secondaryColor": "Secondary Color",
+      "updateButton": "Update Tenant",
+      "error": {
+        "fetchFailed": "Failed to fetch tenant data. Please try again.",
+        "updateFailed": "Failed to update tenant. Please try again."
+      }
+    },
+    "wallet": {
+      "title": "Wallet Management",
+      "balance": "Current Balance",
+      "creditLimit": "Credit Limit",
+      "updateButton": "Update Wallet",
+      "error": {
+        "fetchFailed": "Failed to fetch wallet data. Please try again.",
+        "updateFailed": "Failed to update wallet. Please try again."
+      }
+    },
+    "dashboard": {
+      // ... existing translations
+      "tenantBranding": "Tenant Branding",
+      "wallet": "Wallet Management",
+      "flightSourcePriorities": "Flight Source Priorities"
+    }
   },
   "seatSelection": {
     "title": "Select Your Seat",
@@ -113,6 +159,35 @@
       "fetchPointsFailed": "Failed to fetch loyalty points. Please try again.",
       "fetchTransactionsFailed": "Failed to fetch loyalty transactions. Please try again.",
       "redeemFailed": "Failed to redeem points. Please try again."
+    }
+  },
+  "flightReservation": {
+    "reserve": "Reserve Flight",
+    "reserving": "Reserving...",
+    "error": {
+      "reservationFailed": "Failed to reserve flight. Please try again."
+    }
+  },
+  "reservations": {
+    "title": "Your Reservations",
+    "loading": "Loading reservations...",
+    "departure": "Departure",
+    "arrival": "Arrival",
+    "holdExpires": "Hold Expires",
+    "confirm": "Confirm Booking",
+    "cancel": "Cancel Reservation",
+    "error": {
+      "fetchFailed": "Failed to fetch reservations. Please try again.",
+      "confirmFailed": "Failed to confirm reservation. Please try again.",
+      "cancelFailed": "Failed to cancel reservation. Please try again."
+    }
+  },
+  "booking": {
+    // ... existing booking translations
+    "reserveFlight": "Reserve Flight",
+    "error": {
+      // ... existing error translations
+      "reservationFailed": "Failed to reserve flight. Please try again."
     }
   }
 }

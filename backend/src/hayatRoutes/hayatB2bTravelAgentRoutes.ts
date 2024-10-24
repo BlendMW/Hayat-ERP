@@ -10,12 +10,12 @@ import {
 
 const hayatRouter = express.Router();
 
-hayatRouter.use(hayatAuthorize(['b2b_travel_agent']));
+hayatRouter.use(hayatAuthorize(['hayat_b2b_travel_agent']));
 
-hayatRouter.post('/search', hayatSearchFlights);
-hayatRouter.post('/book', hayatBookFlight);
-hayatRouter.get('/manage-clients', hayatManageClients);
-hayatRouter.get('/commissions', hayatTrackCommissions);
-hayatRouter.post('/custom-itinerary', hayatCreateCustomItinerary);
+hayatRouter.post('/hayat-search', hayatSearchFlights);
+hayatRouter.post('/hayat-book', hayatBookFlight);
+hayatRouter.get('/hayat-manage-clients', hayatManageClients);
+hayatRouter.get('/hayat-commissions', hayatTrackCommissions);
+hayatRouter.post('/hayat-custom-itinerary', hayatCreateCustomItinerary);
 
 export default hayatRouter;

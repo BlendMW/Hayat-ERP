@@ -26,6 +26,21 @@ export const handleError = (error: any): APIGatewayProxyResult => {
   };
 };
 
+export const validateBookingData = (data: any) => {
+  const requiredFields = ['flightId', 'passengers', 'seatSelection', 'ancillaryServices'];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new HayatError(`Missing required field: ${field}`, 400);
+    }
+  }
+
+  if (!Array.isArray(data.passengers) || data.passengers.length === 0) {
+    throw new HayatError('Passengers must be a non-empty array', 400);
+  }
+
+  // Add more specific validations as needed
+};
+
 export const validateFlightSourceData = (data: any) => {
   const requiredFields = ['name', 'type', 'isActive'];
   for (const field of requiredFields) {
@@ -170,5 +185,15 @@ export const validateCommunicationChannelData = (data: any) => {
   const validTypes = ['EMAIL', 'SMS', 'PUSH'];
   if (!validTypes.includes(data.type)) {
     throw new HayatError('Invalid communication channel type', 400);
+  }
+};
+
+export const validateReservationData = (data: any) => {
+  if (!data.flightId) {
+    throw new HayatError('Flight ID is required', 400);
+  }
+
+  if (data.holdDurationMinutes && typeof data.holdDurationMinutes !== 'number') {
+    throw new HayatError('Hold duration must be a number', 400);
   }
 };

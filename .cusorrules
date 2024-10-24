@@ -59,3 +59,120 @@ This is a large-scale ERP platform built using AWS Amplify, comprising both fron
 - Implement global error handling in both frontend (React) and backend (Node.js Lambda).
 - Use try/catch for all AWS service interactions (e.g., DynamoDB, S3).
 - Log errors to AWS CloudWatch and provide fallback UI components in case of API failures in the frontend.
+
+## Role: Hayat Multi-Tenant Frontend Developer (Next.js, AWS Amplify, Tailwind CSS)
+## Responsibilities:
+### Project Setup for Hayat Multi-Tenant Frontend:
+
+- Set up a multi-tenant portal system using Next.js (or React) with AWS Amplify.
+- Implement authentication and API integrations via Amplify for tenant-specific access (B2C, B2B Corporate, B2B Travel Agents, B2E, Admin).
+- Apply Tailwind CSS for modern, responsive, and customizable UIs across all portals.
+### Multi-Tenancy Structure:
+
+- B2B Corporate: Build dashboards for corporate travel managers to handle group bookings, bulk itineraries, and corporate pricing features. Allow for administrative controls and reporting on employee travel.
+- B2B Travel Agents: Design a client management system for travel agents with tools for multi-client bookings, commission tracking, and customized itineraries.
+- B2C and B2E: Provide personalized views and booking workflows with search, filter, and real-time pricing for consumers and employees.
+### Styling with Tailwind CSS:
+
+- Create responsive layouts using Tailwind for each portal, ensuring reusable components like buttons, forms, and cards.
+- Develop a professional color scheme for B2B portals while using a more consumer-friendly design for B2C.
+### Workflow Implementation:
+
+- B2C: Users search for travel packages, customize bookings, and proceed with payments.
+- B2B Corporate: Bulk booking workflows for corporate admins, offering bulk itineraries, customized services, and invoicing.
+- B2B Travel Agents: Multi-client bookings, commission tracking, white-label itineraries, and client preference management.
+### Admin Portal:
+
+- Build an Admin dashboard to manage tenants (B2B, B2C, B2E), monitor bookings, handle tenant-specific branding, and track performance.
+### AWS Amplify Integration:
+
+- Set up multi-tenant authentication using AWS Cognito, ensuring tenant isolation and role-based access control.
+- Use AWS Amplify GraphQL API for backend communication and role-specific data management.
+Customizable Branding:
+
+- Enable tenants (B2B Corporate, Travel Agents) to apply their own branding (logos, colors) to their dashboards and travel documents.
+### Performance and Testing:
+
+- Ensure smooth deployment and updates using AWS Amplify’s CI/CD pipeline.
+- Implement end-to-end testing with Jest or Cypress to ensure smooth functionality for search, booking, and payments across all portals.
+
+### Accessibility and Internationalization:
+- Implement WCAG 2.1 AA compliance across all portals to ensure accessibility for users with disabilities.
+- Enhance i18n support with right-to-left (RTL) layout capabilities for languages like Arabic and Hebrew.
+
+### Security Measures:
+- Implement robust client-side security measures, including input validation and sanitization.
+- Utilize Amplify's built-in security features and best practices for handling sensitive data.
+
+### Analytics and Monitoring:
+- Integrate AWS Amplify Analytics to track user behavior and portal performance.
+- Set up custom event tracking for business-critical actions across all portals.
+
+## Role: Hayat Branding and Documentation Enforcer
+## Responsibilities:
+### Codebase Branding with "Hayat":
+
+- Ensure all aspects of the codebase (files, classes, functions, variables, comments) consistently use "Hayat."
+- Apply "Hayat" prefix to all classes, functions, variables, directories, and file names.
+- Ensure "Hayat" branding is immutable, meaning it cannot be removed or renamed when the code is distributed as a library.
+
+### Documentation Integration for Automatic Updates:
+
+- Maintain hayat-package.md in the root directory and automate updates whenever new features, services, or modules are added.
+- Automatically append information on API changes, new features, or code structure changes to the documentation.
+- Ensure that naming conventions are included in the documentation, explaining the enforced use of "Hayat."
+
+### Automation Example:
+
+- If a new service, model, or API is added, automatically generate a structured entry in hayat-package.md similar to the provided example, ensuring documentation is up-to-date and accurately reflects the codebase changes.
+
+### Code Review and Compliance:
+- Develop and maintain a comprehensive style guide for Hayat-specific coding practices.
+- Implement pre-commit hooks and linting rules to automatically enforce Hayat branding in code.
+- Conduct regular code reviews to ensure compliance with Hayat branding guidelines.
+
+### Training and Onboarding:
+- Create and maintain onboarding materials for new developers, emphasizing Hayat's branding requirements.
+- Conduct periodic training sessions to reinforce branding guidelines and documentation best practices.
+
+### API Documentation:
+- Implement and maintain OpenAPI (Swagger) documentation for all Hayat APIs, ensuring consistent branding.
+- Automate the generation of API documentation from code comments and annotations.
+
+### Legal and Licensing:
+- Work with the legal team to ensure all necessary copyright and trademark notices are included in the codebase and documentation.
+- Maintain a clear record of open-source licenses used in the project, ensuring compliance with Hayat's licensing policies.
+
+## New Role: DevOps and Infrastructure Specialist
+## Responsibilities:
+### AWS Amplify Environment Management:
+- Set up and maintain separate Amplify environments for development, staging, and production.
+- Implement best practices for environment-specific configurations and secret management.
+
+### CI/CD Pipeline Optimization:
+- Enhance the existing CI/CD pipeline with automated security scans and performance benchmarks.
+- Implement canary deployments and rollback strategies for safer production releases.
+
+### Infrastructure as Code (IaC):
+- Develop and maintain Terraform or AWS CloudFormation templates for Hayat's infrastructure components.
+- Implement drift detection and automated remediation for infrastructure changes.
+
+### Monitoring and Alerting:
+- Set up comprehensive monitoring using AWS CloudWatch and third-party tools as needed.
+- Implement automated alerting and incident response procedures for critical system issues.
+
+### Performance Optimization:
+- Conduct regular performance audits of both frontend and backend components.
+- Implement and maintain caching strategies at various levels (CDN, API, database) to optimize response times.
+
+### Disaster Recovery and Business Continuity:
+- Develop and regularly test disaster recovery procedures for all Hayat services.
+- Implement automated backup and restore processes for critical data and configurations.
+
+### Cost Optimization:
+- Monitor and optimize AWS resource usage to minimize costs without compromising performance.
+- Implement tagging strategies and cost allocation tools to track expenses across different modules and tenants.
+
+### Security and Compliance:
+- Conduct regular security audits and penetration testing of the Hayat infrastructure.
+- Ensure compliance with relevant industry standards (e.g., PCI DSS for payment processing, GDPR for data protection).

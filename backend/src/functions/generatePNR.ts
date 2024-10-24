@@ -1,10 +1,18 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { generatePNRFromProvider } from '../services/bookingService';
-import { CharterFlight } from '../models/CharterFlight';
-import { PricingRule } from '../models/PricingRule';
+import { generatePNRFromProvider } from '../services/hayatBookingService';
+import { HayatCharterFlight } from '../models/HayatCharterFlight';
+import { HayatPricingRule } from '../models/HayatPricingRule';
+import { getHayatRecentBookings } from '../services/hayatBookingService';
+import { HayatError, handleHayatError } from '../utils/hayatErrorHandling';
 
-const calculateDynamicPrice = async (flight: CharterFlight, bookingData: any) => {
-  const pricingRules = await PricingRule.query(flight.id);
+interface HayatBookingData {
+  flightId: string;
+  isCharterFlight: boolean;
+  // Add other necessary fields
+}
+
+const calculateHayatDynamicPrice = async (flight: HayatCharterFlight, bookingData: HayatBookingData) => {
+  const pricingRules = await HayatPricingRule.query(flight.id);
   let finalPrice = flight.basePrice;
 
   // Factor in available seats
@@ -17,7 +25,7 @@ const calculateDynamicPrice = async (flight: CharterFlight, bookingData: any) =>
   }
 
   // Factor in demand (number of bookings in the last 24 hours)
-  const recentBookings = await getRecentBookings(flight.id, 24);
+  const recentBookings = await getHayatRecentBookings(flight.id, 24);
   const demandMultiplier = 1 + (recentBookings.length * 0.01); // Increase price by 1% for each recent booking
   finalPrice *= demandMultiplier;
 
@@ -34,30 +42,28 @@ const calculateDynamicPrice = async (flight: CharterFlight, bookingData: any) =>
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {
-    const bookingData = JSON.parse(event.body || '{}');
+    const bookingData: HayatBookingData = JSON.parse(event.body || '{}');
     const tenant = event.headers['x-tenant-id'];
 
     if (!bookingData || !tenant) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Booking data and Tenant ID are required' }),
-      };
+      throw new HayatError('Booking data and Tenant ID are required', 400);
     }
 
     let flight;
-    if (event.isCharterFlight) {
-      flight = await CharterFlight.get(event.flightId);
+    if (bookingData.isCharterFlight) {
+      flight = await HayatCharterFlight.get(bookingData.flightId);
     } else {
       // Existing regular flight retrieval logic
+      // Implement this part based on your regular flight model
     }
 
     if (!flight) {
-      throw new Error('Flight not found');
+      throw new HayatError('Flight not found', 404);
     }
 
     let finalPrice;
-    if (event.isCharterFlight) {
-      finalPrice = await calculateDynamicPrice(flight, bookingData);
+    if (bookingData.isCharterFlight) {
+      finalPrice = await calculateHayatDynamicPrice(flight, bookingData);
     } else {
       finalPrice = flight.basePrice;
     }
@@ -69,10 +75,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       body: JSON.stringify({ pnr, finalPrice }),
     };
   } catch (error) {
-    console.error('Error generating PNR:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error' }),
-    };
+    return handleHayatError(error);
   }
 };

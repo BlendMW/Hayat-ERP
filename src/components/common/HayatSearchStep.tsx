@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { API } from 'aws-amplify';
 import { useTranslation } from 'react-i18next';
 import { HayatError } from '../../utils/errorHandling';
+import { HayatMetaSearchResults } from './HayatMetaSearchResults';
 
 interface Flight {
   id: string;
@@ -19,6 +20,8 @@ export const HayatSearchStep: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
+  const [internalResults, setInternalResults] = useState<Flight[]>([]);
+  const [externalResults, setExternalResults] = useState<Flight[]>([]);
 
   useEffect(() => {
     fetchFlights();
@@ -34,6 +37,21 @@ export const HayatSearchStep: React.FC = () => {
     } catch (error) {
       console.error('Error fetching flights:', error);
       setError(t('search.error.fetchFailed'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const performMetaSearch = async (searchParams: any) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await API.get('hayatApi', '/meta-search', { queryStringParameters: searchParams });
+      setInternalResults(response.internal);
+      setExternalResults(response.external);
+    } catch (error) {
+      console.error('Error performing meta-search:', error);
+      setError(t('search.error.metaSearchFailed'));
     } finally {
       setLoading(false);
     }
@@ -59,9 +77,7 @@ export const HayatSearchStep: React.FC = () => {
       {loading && <p>{t('search.loading')}</p>}
       {error && <p className="hayat-error">{error}</p>}
       {!loading && !error && (
-        <div className="hayat-flight-results">
-          {flights.length > 0 ? renderFlightList(flights) : <p>{t('search.noFlights')}</p>}
-        </div>
+        <HayatMetaSearchResults internalResults={internalResults} externalResults={externalResults} />
       )}
     </div>
   );

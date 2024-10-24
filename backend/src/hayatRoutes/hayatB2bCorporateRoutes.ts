@@ -11,13 +11,13 @@ import {
 
 const hayatRouter = express.Router();
 
-hayatRouter.use(hayatAuthorize(['b2b_corporate']));
+hayatRouter.use(hayatAuthorize(['hayat_b2b_corporate']));
 
-hayatRouter.post('/search', hayatSearchFlights);
-hayatRouter.post('/bulk-book', hayatBulkBookFlights);
-hayatRouter.get('/manage', hayatManageCorporateAccount);
-hayatRouter.get('/invoices', hayatGetCorporateInvoices);
-hayatRouter.get('/bulk-itineraries', hayatGetBulkItineraries);
-hayatRouter.post('/customize-dashboard', hayatCustomizeDashboard);
+hayatRouter.post('/hayat-search', hayatSearchFlights);
+hayatRouter.post('/hayat-bulk-book', hayatBulkBookFlights);
+hayatRouter.get('/hayat-manage', hayatManageCorporateAccount);
+hayatRouter.get('/hayat-invoices', hayatGetCorporateInvoices);
+hayatRouter.get('/hayat-bulk-itineraries', hayatGetBulkItineraries);
+hayatRouter.post('/hayat-customize-dashboard', hayatCustomizeDashboard);
 
 export default hayatRouter;

@@ -1,6 +1,6 @@
 import express from 'express';
-import { Amplify, Auth } from 'aws-amplify';
-import awsconfig from './aws-exports';
+import { Amplify } from 'aws-amplify';
+import awsconfig from './hayatAwsConfig';
 import hayatB2cRoutes from './hayatRoutes/hayatB2cRoutes';
 import hayatB2bCorporateRoutes from './hayatRoutes/hayatB2bCorporateRoutes';
 import hayatB2bTravelAgentRoutes from './hayatRoutes/hayatB2bTravelAgentRoutes';

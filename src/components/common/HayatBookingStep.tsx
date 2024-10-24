@@ -74,19 +74,35 @@ export const HayatBookingStep: React.FC<HayatBookingStepProps> = ({ selectedFlig
         },
       });
       
-      // Add loyalty points
-      await API.post('hayatApi', '/add-loyalty-points', {
-        body: {
-          bookingId: response.bookingId,
-          amount: response.totalPrice,
-        },
-      });
-
       // Handle successful booking (e.g., show confirmation, navigate to payment)
       navigateToPayment(response.bookingId);
     } catch (error) {
       console.error('Error creating booking:', error);
-      setError(t('booking.error.bookingFailed'));
+      if (error.response && error.response.data && error.response.data.error === 'Insufficient credit') {
+        setError(t('booking.error.insufficientCredit'));
+      } else {
+        setError(t('booking.error.bookingFailed'));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReserveFlight = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await API.post('hayatApi', '/reserve-flight', {
+        body: {
+          flightId: selectedFlight.id,
+          holdDurationMinutes: 30, // You can make this configurable
+        },
+      });
+      // Navigate to reservation management or payment page
+      navigateToReservationManagement(response.id);
+    } catch (error) {
+      console.error('Error reserving flight:', error);
+      setError(t('booking.error.reservationFailed'));
     } finally {
       setLoading(false);
     }
@@ -106,6 +122,9 @@ export const HayatBookingStep: React.FC<HayatBookingStepProps> = ({ selectedFlig
           {/* Add booking form here */}
           <button onClick={() => handleBooking({ /* Add form data here */ })}>
             {t('booking.confirmButton')}
+          </button>
+          <button onClick={handleReserveFlight}>
+            {t('booking.reserveFlight')}
           </button>
         </>
       )}

@@ -17,6 +17,13 @@ import { createNotification } from '../services/notificationService';
 import { LoyaltyProgram } from '../models/LoyaltyProgram';
 import { User } from '../models/User';
 import { Transaction } from '../models/Transaction';
+import { performMetaSearch } from '../services/metaSearchService';
+import { HayatError } from '../utils/errorHandling';
+import { trackAffiliateClick, trackAffiliateConversion } from '../services/analyticsService';
+import { Tenant } from '../models/Tenant';
+import { Wallet } from '../models/Wallet';
+import { HoldTimer } from '../models/HoldTimer';
+import { sendNotification } from '../services/notificationService';
 
 export const hayatSearchFlights = async (req: Request, res: Response) => {
   try {
@@ -488,5 +495,155 @@ export class HayatB2bCorporateController {
 
   async getLoyaltyTransactions(userId: string) {
     return Transaction.query(userId);
+  }
+
+  async performMetaSearch(searchParams: any) {
+    try {
+      const internalResults = await this.searchFlights(searchParams);
+      const externalResults = await performMetaSearch(searchParams);
+      return {
+        internal: internalResults,
+        external: externalResults,
+      };
+    } catch (error) {
+      if (error instanceof HayatError) {
+        throw error;
+      }
+      console.error('Error performing meta-search:', error);
+      throw new HayatError('An error occurred while performing the meta-search', 500);
+    }
+  }
+
+  async trackAffiliateClick(userId: string, metaSearchResultId: string, providerId: string) {
+    await trackAffiliateClick(userId, metaSearchResultId, providerId);
+  }
+
+  async trackAffiliateConversion(userId: string, metaSearchResultId: string, providerId: string, amount: number) {
+    await trackAffiliateConversion(userId, metaSearchResultId, providerId, amount);
+  }
+
+  async getTenant(tenantId: string) {
+    return Tenant.get(tenantId);
+  }
+
+  async updateTenant(tenantId: string, tenantData: Partial<Tenant>) {
+    const tenant = await Tenant.get(tenantId);
+    Object.assign(tenant, tenantData);
+    await tenant.save();
+    return tenant;
+  }
+
+  async getWallet(tenantId: string) {
+    const wallets = await Wallet.query(tenantId);
+    return wallets[0]; // Assuming one wallet per tenant
+  }
+
+  async updateWallet(tenantId: string, walletData: Partial<Wallet>) {
+    const wallet = await this.getWallet(tenantId);
+    Object.assign(wallet, walletData);
+    await wallet.save();
+    return wallet;
+  }
+
+  async checkCreditLimit(tenantId: string, amount: number): Promise<boolean> {
+    const wallet = await this.getWallet(tenantId);
+    return wallet.balance + wallet.creditLimit >= amount;
+  }
+
+  async createBooking(bookingData: any, tenantId: string): Promise<any> {
+    const hasSufficientCredit = await this.checkCreditLimit(tenantId, bookingData.totalPrice);
+    if (!hasSufficientCredit) {
+      throw new Error('Insufficient credit');
+    }
+
+    // Proceed with booking creation
+    // ... existing booking creation logic
+
+    // Update wallet balance
+    const wallet = await this.getWallet(tenantId);
+    wallet.balance -= bookingData.totalPrice;
+    await wallet.save();
+
+    return booking;
+  }
+
+  async reserveFlight(userId: string, flightId: string, holdDurationMinutes: number = 30) {
+    const booking = await Booking.create({
+      userId,
+      flightId,
+      status: 'RESERVED',
+      holdExpiresAt: new Date(Date.now() + holdDurationMinutes * 60000).toISOString(),
+    });
+
+    await HoldTimer.create({
+      bookingId: booking.id,
+      expiresAt: booking.holdExpiresAt,
+    });
+
+    // Schedule a notification for 5 minutes before expiration
+    const notificationTime = new Date(booking.holdExpiresAt);
+    notificationTime.setMinutes(notificationTime.getMinutes() - 5);
+    await this.scheduleHoldExpirationNotification(booking.id, notificationTime);
+
+    return booking;
+  }
+
+  async confirmBooking(bookingId: string) {
+    const booking = await Booking.get(bookingId);
+    if (booking.status !== 'RESERVED' || new Date(booking.holdExpiresAt) < new Date()) {
+      throw new HayatError('Booking hold has expired', 400);
+    }
+
+    booking.status = 'CONFIRMED';
+    await booking.save();
+
+    // Remove the hold timer
+    const holdTimer = await HoldTimer.query(bookingId);
+    if (holdTimer.length > 0) {
+      await holdTimer[0].delete();
+    }
+
+    return booking;
+  }
+
+  async cancelReservation(bookingId: string) {
+    const booking = await Booking.get(bookingId);
+    if (booking.status !== 'RESERVED') {
+      throw new HayatError('Booking is not in a reserved state', 400);
+    }
+
+    booking.status = 'CANCELLED';
+    await booking.save();
+
+    // Remove the hold timer
+    const holdTimer = await HoldTimer.query(bookingId);
+    if (holdTimer.length > 0) {
+      await holdTimer[0].delete();
+    }
+
+    return booking;
+  }
+
+  async getUserReservations(userId: string) {
+    return Booking.query(userId, {
+      filter: {
+        status: { eq: 'RESERVED' },
+      },
+    });
+  }
+
+  private async scheduleHoldExpirationNotification(bookingId: string, notificationTime: Date) {
+    const booking = await Booking.get(bookingId);
+    const user = await User.get(booking.userId);
+    const flight = await Flight.get(booking.flightId);
+
+    // Create a notification record
+    await Notification.create({
+      userId: user.id,
+      type: 'HOLD_EXPIRATION',
+      content: `Your hold for flight ${flight.flightNumber} will expire in 5 minutes.`,
+      status: 'PENDING',
+      scheduledFor: notificationTime.toISOString(),
+    });
   }
 }

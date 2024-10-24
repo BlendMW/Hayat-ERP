@@ -18,10 +18,17 @@
     "departure": "المغادرة",
     "arrival": "الوصول",
     "price": "السعر",
-    "loading": "جاري تحميل الرات...",
+    "loading": "جاري تحميل الر��...",
     "noFlights": "لا توجد رحلات متاحة",
     "error": {
       "fetchFailed": "فشل في جلب الرحلات. يرجى المحاولة مرة أخرى."
+    },
+    "internalResults": "رحلاتنا",
+    "externalResults": "رحلات الشركاء",
+    "provider": "المزود",
+    "bookExternally": "احجز على موقع الشريك",
+    "error": {
+      "metaSearchFailed": "فشل في إجراء البحث الشامل. يرجى المحاولة مرة أخرى."
     }
   },
   "booking": {
@@ -32,7 +39,8 @@
     "loading": "جاري معالجة الحجز...",
     "error": {
       "priceFailed": "فشل في حساب السعر. يرجى المحاولة مرة أخرى.",
-      "bookingFailed": "فشل في إنشاء الحجز. يرجى المحاولة مرة أخرى."
+      "bookingFailed": "فشل في إنشاء الحجز. يرجى المحاولة مرة أخرى.",
+      "insufficientCredit": "رصيد غير كافٍ لإتمام هذا الحجز. يرجى الاتصال بالمسؤول."
     }
   },
   "admin": {
@@ -41,6 +49,11 @@
       "sourcesTitle": "المصادر المتاحة",
       "error": {
         "fetchFailed": "فشل في جلب مصادر الرحلات. يرجى المحاولة مرة أخرى."
+      },
+      "priorityTitle": "أولويات مصادر الرحلات",
+      "error": {
+        "fetchFailed": "فشل في جلب أولويات المصادر. يرجى المحاولة مرة أخرى.",
+        "updateFailed": "فشل في تحديث أولوية مصدر الرحلة"
       }
     },
     "sourcePriorities": {
@@ -53,7 +66,45 @@
     },
     "loading": "جاري التحميل...",
     "active": "نشط",
-    "inactive": "غير نشط"
+    "inactive": "غير نشط",
+    "externalProviders": {
+      "title": "مزودي الخدمات الخارجيين",
+      "active": "نشط",
+      "error": {
+        "fetchFailed": "فشل في جلب مزودي الخدمات الخارجيين. ي��جى المحاولة مرة أخرى.",
+        "createFailed": "فشل في إنشاء مزود خدمة خارجي. يرجى المحاولة مرة أخرى.",
+        "updateFailed": "فشل في تحديث مزود الخدمة الخارجي. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "tenant": {
+      "title": "تهيئة العلامة التجارية للمستأجر",
+      "name": "اسم المستأجر",
+      "domain": "النطاق",
+      "logo": "رابط الشعار",
+      "primaryColor": "اللون الأساسي",
+      "secondaryColor": "اللون الثانوي",
+      "updateButton": "تحديث المستأجر",
+      "error": {
+        "fetchFailed": "فشل في جلب بيانات المستأجر. يرجى المحاولة مرة أخرى.",
+        "updateFailed": "فشل في تحديث المستأجر. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "wallet": {
+      "title": "إدارة المحفظة",
+      "balance": "الرصيد الحالي",
+      "creditLimit": "حد الائتمان",
+      "updateButton": "تحديث المحفظة",
+      "error": {
+        "fetchFailed": "فشل في جلب بيانات المحفظة. يرجى المحاولة مرة أخرى.",
+        "updateFailed": "فشل في تحديث المحفظة. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "dashboard": {
+      // ... existing translations
+      "tenantBranding": "العلامة التجارية للمستأجر",
+      "wallet": "إدارة المحفظة",
+      "flightSourcePriorities": "أولويات مصادر الرحلات"
+    }
   },
   "seatSelection": {
     "title": "اختر مقعدك",
@@ -100,7 +151,7 @@
   },
   "notificationTemplates": {
     "title": "قوالب الإشعارات",
-    "loading": "جاري تحميل قوالب الإشعارات...",
+    "loading": "جاري تحميل قوالب الإشعار��ت...",
     "save": "حفظ القالب",
     "error": {
       "fetchFailed": "فشل في جلب قوالب الإشعارات. يرجى المحاولة مرة أخرى.",
@@ -116,6 +167,35 @@
       "fetchPointsFailed": "فشل في جلب نقاط الولاء. يرجى المحاولة مرة أخرى.",
       "fetchTransactionsFailed": "فشل في جلب معاملات الولاء. يرجى المحاولة مرة أخرى.",
       "redeemFailed": "فشل في استبدال النقاط. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "flightReservation": {
+    "reserve": "حجز الرحلة",
+    "reserving": "جاري الحجز...",
+    "error": {
+      "reservationFailed": "فشل في حجز الرحلة. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "reservations": {
+    "title": "حجوزاتك",
+    "loading": "جاري تحميل الحجوزات...",
+    "departure": "المغادرة",
+    "arrival": "الوصول",
+    "holdExpires": "ينتهي الحجز",
+    "confirm": "تأكيد الحجز",
+    "cancel": "إلغاء الحجز",
+    "error": {
+      "fetchFailed": "فشل في جلب الحجوزات. يرجى المحاولة مرة أخرى.",
+      "confirmFailed": "فشل في تأكيد الحجز. يرجى المحاولة مرة أخرى.",
+      "cancelFailed": "فشل في إلغاء الحجز. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "booking": {
+    // ... existing booking translations
+    "reserveFlight": "حجز الرحلة",
+    "error": {
+      // ... existing error translations
+      "reservationFailed": "فشل في حجز الرحلة. يرجى المحاولة مرة أخرى."
     }
   }
 }

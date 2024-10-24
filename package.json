@@ -1,20 +1,38 @@
 {
+  "name": "hayat-backend",
+  "version": "1.0.0",
+  "main": "hayatApp.ts",
   "scripts": {
-    "build": "react-scripts build"
+    "start": "ts-node hayatApp.ts",
+    "start:backend": "ts-node hayatApp.ts",
+    "dev:backend": "nodemon --exec ts-node hayatApp.ts",
+    "start:frontend": "react-scripts start",
+    "build:frontend": "react-scripts build",
+    "test:frontend": "react-scripts test",
+    "eject:frontend": "react-scripts eject"
   },
   "dependencies": {
     "@aws-amplify/core": "^6.4.5",
     "@aws-amplify/ui-react": "^6.5.4",
-    "aws-amplify": "^6.6.6"
+    "aws-amplify": "^6.6.6",
+    "express": "^4.17.1",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.5.0",
     "@aws-amplify/backend-cli": "^1.2.9",
+    "@eslint/js": "^9.13.0",
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.15.11",
     "aws-cdk": "^2.162.1",
     "aws-cdk-lib": "^2.162.1",
     "constructs": "^10.4.2",
     "esbuild": "^0.24.0",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react": "^7.37.2",
+    "globals": "^15.11.0",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.11.0"
   }
 }
