@@ -1,18 +1,13 @@
 import React from 'react';
-import { useTenant } from '../../hooks/useTenant';
-import { tenantConfig } from '../../config/tenantConfig';
+import { HayatBookingFlow } from '../common/HayatBookingFlow';
 
-const HomePage: React.FC = () => {
-  const { tenant } = useTenant();
-  const config = tenantConfig[tenant];
-
+const HayatB2CHomePage: React.FC = () => {
   return (
-    <div className={`home-page ${config.theme}`}>
-      <img src={config.logo} alt={`${tenant} logo`} />
-      <h1>Welcome to the {tenant.toUpperCase()} Portal</h1>
-      {/* Add more B2C-specific content */}
+    <div className="hayat-b2c-home">
+      <h1>Welcome to Hayat Travel</h1>
+      <HayatBookingFlow userType="b2c" />
     </div>
   );
 };
 
-export default HomePage;
+export default HayatB2CHomePage;

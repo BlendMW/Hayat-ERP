@@ -1,23 +1,13 @@
 import React from 'react';
-import { useTenant } from '../../hooks/useTenant';
-import { tenantConfig } from '../../config/tenantConfig';
+import { HayatBookingFlow } from '../common/HayatBookingFlow';
 
-const HomePage: React.FC = () => {
-  const { tenant } = useTenant();
-  const config = tenantConfig[tenant];
-
+const HayatB2BHomePage: React.FC = () => {
   return (
-    <div className={`home-page ${config.theme}`}>
-      <img src={config.logo} alt={`${tenant} logo`} />
-      <h1>Welcome to the B2B Portal</h1>
-      <p>Manage your business travel and corporate bookings here.</p>
-      <div className="quick-links">
-        <button>Search Flights</button>
-        <button>Manage Bookings</button>
-        <button>Corporate Reports</button>
-      </div>
+    <div className="hayat-b2b-home">
+      <h1>Hayat Travel - Business Portal</h1>
+      <HayatBookingFlow userType="b2b" />
     </div>
   );
 };
 
-export default HomePage;
+export default HayatB2BHomePage;

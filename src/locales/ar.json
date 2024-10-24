@@ -1,0 +1,121 @@
+{
+  "search.origin": "المغادرة",
+  "search.destination": "الوجهة",
+  "search.departureDate": "تاريخ المغادرة",
+  "search.returnDate": "تاريخ العودة (اختياري)",
+  "search.passengers": "المسافرون",
+  "search.button": "البحث عن الرحلات",
+  "search.error": "لا يمكن البحث عن الرحلات",
+  "search.error.noFlights": "لا يوجد رحلات متاحة",
+  "search.error.noFlights.description": "لا يمكن العثور على رحلات متاحة بناءً على المعايير المحددة. يرجى التحقق من البيانات المدخلة وإعادة المحاولة.",
+  "search": {
+    "title": "البحث عن الرحلات",
+    "regularFlights": "الرحلات العادية",
+    "charterFlights": "الرحلات المستأجرة",
+    "charterFlight": "(مستأجرة)",
+    "from": "من",
+    "to": "إلى",
+    "departure": "المغادرة",
+    "arrival": "الوصول",
+    "price": "السعر",
+    "loading": "جاري تحميل الرات...",
+    "noFlights": "لا توجد رحلات متاحة",
+    "error": {
+      "fetchFailed": "فشل في جلب الرحلات. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "booking": {
+    "title": "حجز الرحلة",
+    "flightDetails": "تفاصيل الرحلة {{flightNumber}}",
+    "price": "السعر الإجمالي: {{price}}",
+    "confirmButton": "تأكيد الحجز",
+    "loading": "جاري معالجة الحجز...",
+    "error": {
+      "priceFailed": "فشل في حساب السعر. يرجى المحاولة مرة أخرى.",
+      "bookingFailed": "فشل في إنشاء الحجز. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "admin": {
+    "flightSources": {
+      "title": "إدارة مصادر الرحلات",
+      "sourcesTitle": "المصادر المتاحة",
+      "error": {
+        "fetchFailed": "فشل في جلب مصادر الرحلات. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "sourcePriorities": {
+      "title": "أولويات المصادر",
+      "error": {
+        "fetchFailed": "فشل في جلب أولويات المصادر. يرجى المحاولة مرة أخرى.",
+        "updateFailed": "فشل في تحديث أولوية المصدر. يرجى المحاولة مرة أخرى.",
+        "addOverrideFailed": "فشل في إضافة تجاوز المستخدم. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "loading": "جاري التحميل...",
+    "active": "نشط",
+    "inactive": "غير نشط"
+  },
+  "seatSelection": {
+    "title": "اختر مقعدك",
+    "loading": "جاري تحميل خريطة المقاعد...",
+    "error": {
+      "fetchFailed": "فشل في جلب خريطة المقاعد. يرجى المحاولة مرة أخرى."
+    },
+    "selected": "المقعد المختار: {{seat}} (السعر: {{price}})"
+  },
+  "ancillaryServices": {
+    "title": "الخدمات الإضافية",
+    "loading": "جاري تحميل الخدمات المتاحة...",
+    "error": {
+      "fetchFailed": "فشل في جلب الخدمات الإضافية. يرجى المحاولة مرة أخرى."
+    },
+    "price": "{{price}}",
+    "totalSelected": "تم اختيار {{count}} خدمة (الإجمالي: {{price}})"
+  },
+  "bookingManagement": {
+    "title": "إدارة حجوزاتك",
+    "loading": "جاري تحميل الحجوزات...",
+    "departure": "المغادرة",
+    "arrival": "الوصول",
+    "status": "الحالة",
+    "price": "السعر الإجمالي",
+    "modify": "تعديل الحجز",
+    "cancel": "إلغاء الحجز",
+    "error": {
+      "fetchFailed": "فشل في جلب الحجوزات. يرجى المحاولة مرة أخرى.",
+      "modificationFailed": "فشل في تعديل الحجز. يرجى المحاولة مرة أخرى.",
+      "cancellationFailed": "فشل في إلغاء الحجز. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "communicationChannels": {
+    "title": "قنوات الاتصال",
+    "loading": "جاري تحميل قنوات الاتصال...",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "error": {
+      "fetchFailed": "فشل في جلب قنوات الاتصال. يرجى المحاولة مرة أخرى.",
+      "addFailed": "فشل في إضافة قناة اتصال. يرجى المحاولة مرة أخرى.",
+      "updateFailed": "فشل في تحديث قناة الاتصال. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "notificationTemplates": {
+    "title": "قوالب الإشعارات",
+    "loading": "جاري تحميل قوالب الإشعارات...",
+    "save": "حفظ القالب",
+    "error": {
+      "fetchFailed": "فشل في جلب قوالب الإشعارات. يرجى المحاولة مرة أخرى.",
+      "updateFailed": "فشل في تحديث قالب الإشعار. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "loyalty": {
+    "title": "برنامج الولاء",
+    "currentPoints": "النقاط الحالية: {{points}}",
+    "transactions": "سجل المعاملات",
+    "loading": "جاري تحميل بيانات الولاء...",
+    "error": {
+      "fetchPointsFailed": "فشل في جلب نقاط الولاء. يرجى المحاولة مرة أخرى.",
+      "fetchTransactionsFailed": "فشل في جلب معاملات الولاء. يرجى المحاولة مرة أخرى.",
+      "redeemFailed": "فشل في استبدال النقاط. يرجى المحاولة مرة أخرى."
+    }
+  }
+}

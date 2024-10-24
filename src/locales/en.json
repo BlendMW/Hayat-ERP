@@ -1,0 +1,118 @@
+{
+  "search.origin": "Origin",
+  "search.destination": "Destination",
+  "search.departureDate": "Departure Date",
+  "search.returnDate": "Return Date (Optional)",
+  "search.passengers": "Passengers",
+  "search.button": "Search Flights",
+  "search": {
+    "title": "Search Flights",
+    "regularFlights": "Regular Flights",
+    "charterFlights": "Charter Flights",
+    "charterFlight": "(Charter)",
+    "from": "From",
+    "to": "To",
+    "departure": "Departure",
+    "arrival": "Arrival",
+    "price": "Price",
+    "loading": "Loading flights...",
+    "noFlights": "No flights available",
+    "error": {
+      "fetchFailed": "Failed to fetch flights. Please try again."
+    }
+  },
+  "booking": {
+    "title": "Book Flight",
+    "flightDetails": "Flight Details for {{flightNumber}}",
+    "price": "Total Price: {{price}}",
+    "confirmButton": "Confirm Booking",
+    "loading": "Processing booking...",
+    "error": {
+      "priceFailed": "Failed to calculate price. Please try again.",
+      "bookingFailed": "Failed to create booking. Please try again."
+    }
+  },
+  "admin": {
+    "flightSources": {
+      "title": "Flight Sources Management",
+      "sourcesTitle": "Available Sources",
+      "error": {
+        "fetchFailed": "Failed to fetch flight sources. Please try again."
+      }
+    },
+    "sourcePriorities": {
+      "title": "Source Priorities",
+      "error": {
+        "fetchFailed": "Failed to fetch source priorities. Please try again.",
+        "updateFailed": "Failed to update source priority. Please try again.",
+        "addOverrideFailed": "Failed to add user override. Please try again."
+      }
+    },
+    "loading": "Loading...",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "seatSelection": {
+    "title": "Select Your Seat",
+    "loading": "Loading seat map...",
+    "error": {
+      "fetchFailed": "Failed to fetch seat map. Please try again."
+    },
+    "selected": "Selected seat: {{seat}} (Price: {{price}})"
+  },
+  "ancillaryServices": {
+    "title": "Add-On Services",
+    "loading": "Loading available services...",
+    "error": {
+      "fetchFailed": "Failed to fetch ancillary services. Please try again."
+    },
+    "price": "{{price}}",
+    "totalSelected": "Selected {{count}} service(s) (Total: {{price}})"
+  },
+  "bookingManagement": {
+    "title": "Manage Your Bookings",
+    "loading": "Loading bookings...",
+    "departure": "Departure",
+    "arrival": "Arrival",
+    "status": "Status",
+    "price": "Total Price",
+    "modify": "Modify Booking",
+    "cancel": "Cancel Booking",
+    "error": {
+      "fetchFailed": "Failed to fetch bookings. Please try again.",
+      "modificationFailed": "Failed to modify booking. Please try again.",
+      "cancellationFailed": "Failed to cancel booking. Please try again."
+    }
+  },
+  "communicationChannels": {
+    "title": "Communication Channels",
+    "loading": "Loading communication channels...",
+    "active": "Active",
+    "inactive": "Inactive",
+    "error": {
+      "fetchFailed": "Failed to fetch communication channels. Please try again.",
+      "addFailed": "Failed to add communication channel. Please try again.",
+      "updateFailed": "Failed to update communication channel. Please try again."
+    }
+  },
+  "notificationTemplates": {
+    "title": "Notification Templates",
+    "loading": "Loading notification templates...",
+    "save": "Save Template",
+    "error": {
+      "fetchFailed": "Failed to fetch notification templates. Please try again.",
+      "updateFailed": "Failed to update notification template. Please try again."
+    }
+  },
+  "loyalty": {
+    "title": "Loyalty Program",
+    "currentPoints": "Current Points: {{points}}",
+    "transactions": "Transaction History",
+    "loading": "Loading loyalty data...",
+    "error": {
+      "fetchPointsFailed": "Failed to fetch loyalty points. Please try again.",
+      "fetchTransactionsFailed": "Failed to fetch loyalty transactions. Please try again.",
+      "redeemFailed": "Failed to redeem points. Please try again."
+    }
+  }
+}
