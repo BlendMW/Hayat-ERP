@@ -1,25 +1,30 @@
 import express from 'express';
-import { Amplify } from 'aws-amplify';
-import awsconfig from './hayatAwsConfig';
-import hayatB2cRoutes from './hayatRoutes/hayatB2cRoutes';
-import hayatB2bCorporateRoutes from './hayatRoutes/hayatB2bCorporateRoutes';
-import hayatB2bTravelAgentRoutes from './hayatRoutes/hayatB2bTravelAgentRoutes';
-import hayatB2eRoutes from './hayatRoutes/hayatB2eRoutes';
-import hayatAdminRoutes from './hayatRoutes/hayatAdminRoutes';
-import { hayatAuthMiddleware } from './hayatMiddleware/hayatAuthMiddleware';
+import cors from 'cors';
+import { configureAWS } from './config/hayatAwsConfig';
+import { hayatB2cRouter } from './routes/hayatB2cRoutes';
+import hayatB2bRouter from './routes/hayatB2bRoutes';
+import { hayatB2eRouter } from './routes/hayatB2eRoutes';
+import hayatAdminRouter from './routes/hayatAdminRoutes';
 
-Amplify.configure(awsconfig);
+const app = express();
+const port = process.env.PORT || 3001;
 
-const hayatApp = express();
+try {
+  configureAWS();
 
-hayatApp.use(express.json());
-hayatApp.use(hayatAuthMiddleware);
+  app.use(cors());
+  app.use(express.json());
 
-// HayatApp: Main application setup for Hayat multi-tenant system
-hayatApp.use('/api/hayat/b2c', hayatB2cRoutes);
-hayatApp.use('/api/hayat/b2b/corporate', hayatB2bCorporateRoutes);
-hayatApp.use('/api/hayat/b2b/travel-agent', hayatB2bTravelAgentRoutes);
-hayatApp.use('/api/hayat/b2e', hayatB2eRoutes);
-hayatApp.use('/api/hayat/admin', hayatAdminRoutes);
+  app.use('/api/b2c', hayatB2cRouter);
+  app.use('/api/b2b', hayatB2bRouter);
+  app.use('/api/b2e', hayatB2eRouter);
+  app.use('/api/admin', hayatAdminRouter);
 
-export default hayatApp;
+  app.listen(port, () => {
+    console.log(`Hayat ERP backend is running on port ${port}`);
+  });
+} catch (error) {
+  console.error('Error starting Hayat ERP backend:', error);
+}
+
+export default app;

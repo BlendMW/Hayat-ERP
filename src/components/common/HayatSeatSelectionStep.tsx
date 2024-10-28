@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { API } from 'aws-amplify';
+// import { API } from 'aws-amplify';
 import { useTranslation } from 'react-i18next';
 
 interface SeatMap {
@@ -8,6 +8,7 @@ interface SeatMap {
   rows: number;
   columns: string;
   unavailableSeats: string[];
+  lockedSeats: string[];
   seatPrices: { [key: string]: number };
 }
 

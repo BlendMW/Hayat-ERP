@@ -5,6 +5,9 @@ interface AuthRequest extends Request {
   user?: {
     id: string;
     role: string;
+    attributes: {
+      'custom:tenant': string;
+    };
   };
 }
 
@@ -16,8 +19,21 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string; role: string };
-    req.user = decoded;
+    // Decode token and structure it to match the expected `req.user` type
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      id: string;
+      role: string;
+      'custom:tenant'?: string; // Optional tenant attribute for decoded token
+    };
+
+    // Assign `decoded` properties to `req.user`, including attributes if present
+    req.user = {
+      id: decoded.id,
+      role: decoded.role,
+      attributes: {
+        'custom:tenant': decoded['custom:tenant'] || '', // Default to empty string if undefined
+      },
+    };
     next();
   } catch (error) {
     res.status(401).json({ error: 'Invalid token' });

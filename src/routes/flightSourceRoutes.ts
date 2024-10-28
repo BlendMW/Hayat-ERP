@@ -1,29 +1,22 @@
-import express, { Request as ExpressRequest } from 'express';
+import express from 'express';
+import { AuthenticatedRequest } from '../types/auth';
+import { FlightSource } from '../types/flightSource';
+import { FlightProvider } from '../../providers/flightProvider';
 
-// Define an interface that extends the Express Request type
-interface AuthenticatedRequest extends ExpressRequest {
-  user: {
-    attributes: {
-      'custom:tenant': string;
-    };
-  };
-}
+const router = express.Router();
 
-// ... existing code ...
-
-// Update your route handlers to use AuthenticatedRequest
-router.get('/flight-sources', async (req: AuthenticatedRequest, res) => {
+router.get('/flight-sources', (req: AuthenticatedRequest, res: express.Response) => {
   const tenantId = req.user.attributes['custom:tenant'];
   // ... rest of the route handler
 });
 
-router.post('/flight-sources', async (req: AuthenticatedRequest, res) => {
+router.post('/flight-sources', (req: AuthenticatedRequest, res: express.Response) => {
   // ... existing code ...
-  const newFlightSource = new FlightSource({
+  const newFlightSource: Partial<FlightSource> = {
     // ... other properties ...
     tenantId: req.user.attributes['custom:tenant'],
-  });
+  };
   // ... rest of the route handler
 });
 
-// ... existing code ...
+export default router;

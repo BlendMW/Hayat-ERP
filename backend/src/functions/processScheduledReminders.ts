@@ -1,20 +1,16 @@
+// processExpiredHolds.ts
 import { Handler } from 'aws-lambda';
-import { Booking } from '../models/Booking';
-import { sendReminderNotification } from '../services/notificationService';
+import { HayatBooking } from '../models/HayatBooking';
+import { sendReminderNotification } from '../services/hayatNotificationService';
 
 export const handler: Handler = async () => {
   const now = new Date();
   const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-  const upcomingBookings = await Booking.scan({
-    filter: {
-      departureTime: {
-        between: [now.toISOString(), twentyFourHoursLater.toISOString()],
-      },
-      reminderSent: {
-        eq: false,
-      },
-    },
+  // Retrieve upcoming bookings scheduled within the next 24 hours and that haven't been sent a reminder
+  const upcomingBookings = await HayatBooking.scan({
+    departureTime: { between: [now.toISOString(), twentyFourHoursLater.toISOString()] },
+    reminderSent: { eq: false },
   });
 
   for (const booking of upcomingBookings) {

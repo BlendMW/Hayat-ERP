@@ -14,7 +14,7 @@ interface IntlProviderProps {
 }
 
 export const IntlProvider: React.FC<IntlProviderProps> = ({ children, locale }) => (
-  <ReactIntlProvider messages={messages[locale]} locale={locale}>
+  <ReactIntlProvider messages={messages[locale as keyof typeof messages]} locale={locale}>
     {children}
   </ReactIntlProvider>
 );

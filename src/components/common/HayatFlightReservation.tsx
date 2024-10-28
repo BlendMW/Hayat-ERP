@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API } from 'aws-amplify';
+// import { API } from 'aws-amplify';
 import { useTranslation } from 'react-i18next';
 
 interface HayatFlightReservationProps {

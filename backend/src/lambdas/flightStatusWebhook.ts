@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { FlightStatusUpdateService } from '../services/flightStatusUpdateService';
+import { FlightStatusUpdateService } from '../services/hayatFlightStatusUpdateService';
 import { logger } from '../utils/logger';
 
 export const handler: APIGatewayProxyHandler = async (event) => {

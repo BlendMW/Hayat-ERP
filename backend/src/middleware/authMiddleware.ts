@@ -1,17 +1,46 @@
 import { Request, Response, NextFunction } from 'express';
-import { Auth } from 'aws-amplify';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import jwt from 'jsonwebtoken';
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+interface AuthRequest extends Request {
+    user?: {
+      id: string;
+      email: string;
+      groups: string[];
+      attributes: {
+        'custom:tenant': string; // Ensure 'custom:tenant' is present in attributes
+        [key: string]: string;   // Allow additional attributes if needed
+      };
+    };
+}
+
+// Configure the AWS Cognito client
+const cognitoClient = new CognitoIdentityProviderClient({ region: 'us-east-1' }); // Set your AWS region
+
+export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   try {
-    const session = await Auth.currentSession();
-    const idToken = session.getIdToken().getJwtToken();
-    const userGroups = session.getIdToken().payload['cognito:groups'] || [];
+    // Verify the JWT token to get the payload
+    const decodedToken = jwt.decode(token, { complete: true }) as jwt.JwtPayload;
+
+    if (!decodedToken) {
+      throw new Error('Invalid token');
+    }
+
+    const userGroups = decodedToken.payload['cognito:groups'] || [];
+    const userId = decodedToken.payload['sub'];
+    const email = decodedToken.payload['email'];
 
     req.user = {
-      id: session.getIdToken().payload['sub'],
-      email: session.getIdToken().payload['email'],
+      id: userId,
+      email: email,
       groups: userGroups,
-      attributes: session.getIdToken().payload,
+      attributes: decodedToken.payload,
     };
 
     next();
@@ -21,8 +50,9 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+// Middleware to check if the user has a required role
 export const requireRole = (role: string) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (req.user && req.user.groups.includes(role)) {
       next();
     } else {

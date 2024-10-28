@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API } from 'aws-amplify';
+// import { API } from 'aws-amplify';
 import { useTranslation } from 'react-i18next';
 
 interface FlightSourceFormProps {
@@ -15,7 +15,7 @@ interface FlightSourceFormProps {
 export const HayatFlightSourceForm: React.FC<FlightSourceFormProps> = ({ onSubmit, initialData }) => {
   const [name, setName] = useState(initialData?.name || '');
   const [type, setType] = useState(initialData?.type || 'DIRECT_API');
-  const [isActive, setIsActive] = useState(initialData?.isActive || true);
+  const [isActive, setIsActive] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
 

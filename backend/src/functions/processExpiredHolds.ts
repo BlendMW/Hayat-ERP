@@ -1,26 +1,33 @@
 import { Handler } from 'aws-lambda';
-import { HoldTimer } from '../models/HoldTimer';
-import { Booking } from '../models/Booking';
-import { sendNotification } from '../services/notificationService';
+import { HayatHoldTimer } from '../models/HayatHoldTimer';
+import { HayatBooking } from '../models/HayatBooking';
+import { sendNotification } from '../services/hayatNotificationService';
+import { NotificationData } from '../types/NotificationData'; // Implied import for NotificationData
 
 export const handler: Handler = async () => {
-  const now = new Date();
-  const expiredHolds = await HoldTimer.scan({
-    filter: {
+    const now = new Date();
+    const expiredHolds = await HayatHoldTimer.scan({
       expiresAt: {
         lt: now.toISOString(),
       },
-    },
-  });
+    });
 
   for (const hold of expiredHolds) {
-    const booking = await Booking.get(hold.bookingId);
-    if (booking.status === 'RESERVED') {
+    const booking = await HayatBooking.get(hold.bookingId);
+    if (booking && booking.status === 'RESERVED') {
       booking.status = 'CANCELLED';
       await booking.save();
 
       // Send notification to user
-      await sendNotification(booking.userId, 'HOLD_EXPIRED', `Your reservation for booking ${booking.id} has expired.`);
+      const notificationData: NotificationData = {
+        userId: booking.userId,
+        id: 'some-id', // Add a unique identifier
+        type: 'some-type', // Specify the type of notification
+        content: 'some-content', // Provide the content of the notification
+        channelId: 'some-channel-id', // Specify the channel ID
+        status: 'PENDING' as const, // Use the exact string literal
+      };
+      await sendNotification(notificationData);
     }
 
     // Remove the expired hold timer

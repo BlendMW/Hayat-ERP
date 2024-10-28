@@ -11,5 +11,5 @@ const BookingPage: React.FC = () => {
     </div>
   );
 };
-
 export default BookingPage;
+

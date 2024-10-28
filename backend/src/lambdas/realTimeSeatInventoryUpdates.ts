@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { SeatInventoryService } from '../services/seatInventoryService';
+import { SeatInventoryService } from '../services/hayatSeatInventoryService';
 import { BookingEvent } from '../modules/flights/types';
 import { logger } from '../utils/logger';
 

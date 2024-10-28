@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { FlightScheduleService } from '../services/flightScheduleService';
+import { FlightScheduleService } from '../services/hayatFlightScheduleService';
 import { logger } from '../utils/logger';
 
 const flightScheduleService = new FlightScheduleService();

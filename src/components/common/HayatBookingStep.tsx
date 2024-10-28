@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API } from 'aws-amplify';
+// import { API } from 'aws-amplify';
 import { useTranslation } from 'react-i18next';
 import { HayatError } from '../../utils/errorHandling';
 import { HayatSeatSelectionStep } from './HayatSeatSelectionStep';
@@ -19,6 +19,23 @@ interface Flight {
 interface HayatBookingStepProps {
   selectedFlight: Flight;
 }
+
+// Add this interface
+interface AncillaryService {
+  id: string;
+  price: number;
+  // Add other properties as needed
+}
+
+// Add this function
+const navigateToPayment = (bookingId: string) => {
+  // Implement navigation to payment page
+};
+
+// Add this function
+const navigateToReservationManagement = (id: string) => {
+  // Implement navigation to reservation management page
+};
 
 export const HayatBookingStep: React.FC<HayatBookingStepProps> = ({ selectedFlight }) => {
   const [price, setPrice] = useState(selectedFlight.basePrice);
@@ -63,12 +80,15 @@ export const HayatBookingStep: React.FC<HayatBookingStepProps> = ({ selectedFlig
     setLoading(true);
     setError(null);
     try {
+      const totalAncillaryPrice = selectedServices.reduce((total, service) => total + service.price, 0);
+      const totalPrice = price + seatPrice + totalAncillaryPrice;
+      
       const response = await API.post('hayatApi', '/bookings', {
         body: {
           ...bookingData,
           flightId: selectedFlight.id,
           isCharterFlight: selectedFlight.isCharterFlight,
-          price: price + seatPrice + selectedServices.reduce((total, service) => total + service.price, 0),
+          price: totalPrice,
           selectedSeat,
           selectedServices: selectedServices.map(service => service.id),
         },
@@ -76,9 +96,9 @@ export const HayatBookingStep: React.FC<HayatBookingStepProps> = ({ selectedFlig
       
       // Handle successful booking (e.g., show confirmation, navigate to payment)
       navigateToPayment(response.bookingId);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating booking:', error);
-      if (error.response && error.response.data && error.response.data.error === 'Insufficient credit') {
+      if (error.response?.data?.error === 'Insufficient credit') {
         setError(t('booking.error.insufficientCredit'));
       } else {
         setError(t('booking.error.bookingFailed'));

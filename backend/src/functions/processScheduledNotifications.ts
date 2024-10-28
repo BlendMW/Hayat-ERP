@@ -1,14 +1,12 @@
 import { Handler } from 'aws-lambda';
-import { Notification } from '../models/Notification';
-import { sendNotification } from '../services/notificationService';
+import { HayatNotification } from '../models/HayatNotification';
+import { sendNotification } from '../services/hayatNotificationService';
 
 export const handler: Handler = async () => {
   const now = new Date();
-  const pendingNotifications = await Notification.scan({
-    filter: {
-      status: { eq: 'PENDING' },
-      scheduledFor: { lte: now.toISOString() },
-    },
+  const pendingNotifications = await HayatNotification.scan({
+    status: { eq: 'PENDING' },
+    scheduledFor: { lte: now.toISOString() },
   });
 
   for (const notification of pendingNotifications) {

@@ -4,8 +4,8 @@ import { FlightInventoryManager } from './flightInventoryManager';
 import { FlightSearchParams, StandardizedFlight, APIConnection } from './types';
 import { apiConfigs } from './apiConfigs';
 import { AdvancedSearchFilter } from './advancedSearchFilter';
-import { CurrencyConversionService } from '../../services/currencyConversionService';
-import { FlightScheduleService } from '../../services/flightScheduleService';
+import { CurrencyConversionService } from '../../services/hayatCurrencyConversionService';
+import { FlightScheduleService } from '../../services/hayatFlightScheduleService';
 
 export class FlightsModule {
   private airlineApiManager: AirlineApiManager;

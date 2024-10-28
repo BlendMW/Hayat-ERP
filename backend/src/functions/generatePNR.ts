@@ -2,20 +2,22 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import { generatePNRFromProvider } from '../services/hayatBookingService';
 import { HayatCharterFlight } from '../models/HayatCharterFlight';
 import { HayatPricingRule } from '../models/HayatPricingRule';
-import { getHayatRecentBookings } from '../services/hayatBookingService';
-import { HayatError, handleHayatError } from '../utils/hayatErrorHandling';
+import { handleError, HayatError } from '../utils/errorHandling';
 
 interface HayatBookingData {
   flightId: string;
   isCharterFlight: boolean;
-  // Add other necessary fields
+}
+
+async function getHayatRecentBookings(flightId: string, hours: number): Promise<{ length: number }> {
+  // Mock implementation, replace with real query logic to retrieve recent bookings
+  return { length: 5 }; // Mock 5 bookings
 }
 
 const calculateHayatDynamicPrice = async (flight: HayatCharterFlight, bookingData: HayatBookingData) => {
   const pricingRules = await HayatPricingRule.query(flight.id);
   let finalPrice = flight.basePrice;
 
-  // Factor in available seats
   const availableSeats = flight.availableSeats;
   for (const rule of pricingRules) {
     if (availableSeats >= rule.minAvailableSeats && availableSeats <= rule.maxAvailableSeats) {
@@ -24,17 +26,15 @@ const calculateHayatDynamicPrice = async (flight: HayatCharterFlight, bookingDat
     }
   }
 
-  // Factor in demand (number of bookings in the last 24 hours)
   const recentBookings = await getHayatRecentBookings(flight.id, 24);
-  const demandMultiplier = 1 + (recentBookings.length * 0.01); // Increase price by 1% for each recent booking
+  const demandMultiplier = 1 + (recentBookings.length * 0.01);
   finalPrice *= demandMultiplier;
 
-  // Factor in booking velocity (time until departure)
   const now = new Date();
   const departureTime = new Date(flight.departureTime);
   const hoursUntilDeparture = (departureTime.getTime() - now.getTime()) / (1000 * 60 * 60);
   if (hoursUntilDeparture < 48) {
-    finalPrice *= 1.1; // Increase price by 10% if less than 48 hours until departure
+    finalPrice *= 1.1;
   }
 
   return finalPrice;
@@ -52,9 +52,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     let flight;
     if (bookingData.isCharterFlight) {
       flight = await HayatCharterFlight.get(bookingData.flightId);
-    } else {
-      // Existing regular flight retrieval logic
-      // Implement this part based on your regular flight model
     }
 
     if (!flight) {
@@ -75,6 +72,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       body: JSON.stringify({ pnr, finalPrice }),
     };
   } catch (error) {
-    return handleHayatError(error);
+    return handleError(error);
   }
 };

@@ -10,7 +10,7 @@ interface TenantContextType {
 
 export const TenantContext = createContext<TenantContextType | undefined>(undefined);
 
-export const TenantProvider: React.FC = ({ children }) => {
+export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tenant, setTenant] = useState<Tenant>('b2c');
   const location = useLocation();
 

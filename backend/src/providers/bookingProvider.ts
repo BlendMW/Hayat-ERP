@@ -11,7 +11,7 @@ export class BookingProvider {
   }
 
   async generatePNR(bookingData: any): Promise<string> {
-    let pnr: string;
+    let pnr: string = '';
     let isUnique = false;
 
     while (!isUnique) {

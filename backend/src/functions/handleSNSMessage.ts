@@ -1,7 +1,7 @@
 import { SNSEvent, SNSHandler } from 'aws-lambda';
-import { sendEmail } from '../services/emailService';
-import { sendSMS } from '../services/smsService';
-import { sendPushNotification } from '../services/pushNotificationService';
+import { sendEmail } from '../services/hayatEmailService';
+import { sendSMS } from '../services/hayatSmsService';
+import { sendPushNotification } from '../services/hayatPushNotificationService';
 
 export const handler: SNSHandler = async (event: SNSEvent) => {
   for (const record of event.Records) {

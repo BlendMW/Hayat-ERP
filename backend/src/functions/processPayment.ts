@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { processPaymentWithProvider } from '../services/paymentService';
+import { processPaymentWithProvider } from '../services/hayatPaymentService';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {

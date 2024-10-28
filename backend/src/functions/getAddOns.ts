@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { getAddOnsFromProvider } from '../services/flightService';
+import { getAddOnsFromProvider } from '../services/hayatFlightService';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {

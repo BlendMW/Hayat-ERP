@@ -1,4 +1,5 @@
-import { I18n } from '@aws-amplify/core';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
 
 const enDict = {
   'Search Flights': 'Search Flights',
@@ -22,13 +23,15 @@ const arDict = {
   // Add more translations as needed
 };
 
-const i18n = new I18n({
-  lng: 'en', // Default language
-  fallbackLng: 'en',
-  resources: {
-    en: { translation: enDict },
-    ar: { translation: arDict },
-  },
-});
+i18n
+  .use(initReactI18next)
+  .init({
+    lng: 'en', // Default language
+    fallbackLng: 'en',
+    resources: {
+      en: { translation: enDict },
+      ar: { translation: arDict },
+    },
+  });
 
 export default i18n;

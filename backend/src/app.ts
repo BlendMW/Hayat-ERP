@@ -12,7 +12,7 @@ const HAYAT_API_PREFIX = '/hayat/api/v1';
 
 const hayatApp = express();
 
-app.use(express.json());
+hayatApp.use(express.json());
 
 // Update all route prefixes with Hayat branding
 hayatApp.use(`${HAYAT_API_PREFIX}/flight-sources`, hayatFlightSourceRoutes);

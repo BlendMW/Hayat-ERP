@@ -11,5 +11,5 @@ const ManagementPage: React.FC = () => {
     </div>
   );
 };
-
 export default ManagementPage;
+

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 interface BookingContextType {
   bookingData: any;
@@ -9,11 +9,15 @@ interface BookingContextType {
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
-export const BookingProvider: React.FC = ({ children }) => {
-  const [bookingData, setBookingData] = useState({});
+interface BookingProviderProps {
+  children: ReactNode;
+}
+
+export const BookingProvider: React.FC<BookingProviderProps> = ({ children }) => {
+  const [bookingData, setBookingData] = useState<any>({});
 
   const updateBookingData = useCallback((data: any) => {
-    setBookingData((prevData) => ({ ...prevData, ...data }));
+    setBookingData((prevData: any) => ({ ...prevData, ...data }));
   }, []);
 
   const resetBooking = useCallback(() => {

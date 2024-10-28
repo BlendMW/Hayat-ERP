@@ -20,6 +20,7 @@ export const HayatBookingFlow: React.FC<HayatBookingFlowProps> = ({ userType }) 
   const [error, setError] = useState<string | null>(null);
   const { tenant } = useTenant();
   const { bookingData, updateBookingData } = useBooking();
+  const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
 
   const steps = [
     { component: HayatSearchStep, label: 'Search' },
@@ -69,6 +70,10 @@ export const HayatBookingFlow: React.FC<HayatBookingFlowProps> = ({ userType }) 
           userType={userType}
           tenant={tenant}
           bookingData={bookingData}
+          flightId={selectedFlight?.id || ''}
+          onSeatSelected={(seat: string, price: number) => {
+            // Implement seat selection logic
+          }}
           onNext={handleNextStep}
           onPrevious={handlePreviousStep}
           onError={handleError}

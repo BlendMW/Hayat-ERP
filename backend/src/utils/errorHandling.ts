@@ -197,3 +197,85 @@ export const validateReservationData = (data: any) => {
     throw new HayatError('Hold duration must be a number', 400);
   }
 };
+
+export const validateCharterFlightData = (data: any) => {
+  const requiredFields = ['origin', 'destination', 'departureDate', 'aircraftType', 'capacity'];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new HayatError(`Missing required field: ${field}`, 400);
+    }
+  }
+
+  if (typeof data.capacity !== 'number' || data.capacity < 1) {
+    throw new HayatError('Invalid capacity', 400);
+  }
+};
+
+export const validatePricingRuleData = (data: any) => {
+  const requiredFields = ['name', 'type', 'value'];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new HayatError(`Missing required field: ${field}`, 400);
+    }
+  }
+
+  const validTypes = ['PERCENTAGE', 'FIXED_AMOUNT'];
+  if (!validTypes.includes(data.type)) {
+    throw new HayatError('Invalid pricing rule type', 400);
+  }
+
+  if (typeof data.value !== 'number' || data.value < 0) {
+    throw new HayatError('Invalid pricing rule value', 400);
+  }
+};
+
+export const validateLoyaltyProgramData = (data: any) => {
+  const requiredFields = ['name', 'pointsPerDollar', 'tierThresholds'];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new HayatError(`Missing required field: ${field}`, 400);
+    }
+  }
+
+  if (typeof data.pointsPerDollar !== 'number' || data.pointsPerDollar <= 0) {
+    throw new HayatError('Invalid points per dollar', 400);
+  }
+
+  if (!Array.isArray(data.tierThresholds) || data.tierThresholds.length === 0) {
+    throw new HayatError('Tier thresholds must be a non-empty array', 400);
+  }
+};
+
+export const validateTenantData = (data: any) => {
+  const requiredFields = ['name', 'domain', 'adminEmail'];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new HayatError(`Missing required field: ${field}`, 400);
+    }
+  }
+
+  if (!/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.domain)) {
+    throw new HayatError('Invalid domain format', 400);
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.adminEmail)) {
+    throw new HayatError('Invalid admin email format', 400);
+  }
+};
+
+export const validateWalletData = (data: any) => {
+  const requiredFields = ['userId', 'balance', 'currency'];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new HayatError(`Missing required field: ${field}`, 400);
+    }
+  }
+
+  if (typeof data.balance !== 'number' || data.balance < 0) {
+    throw new HayatError('Invalid balance', 400);
+  }
+
+  if (typeof data.currency !== 'string' || data.currency.length !== 3) {
+    throw new HayatError('Invalid currency format', 400);
+  }
+};

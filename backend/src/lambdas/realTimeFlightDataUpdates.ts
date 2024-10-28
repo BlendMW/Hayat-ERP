@@ -1,6 +1,6 @@
 import { SQSHandler, SQSEvent, SQSRecord } from 'aws-lambda';
-import { FlightScheduleService } from '../services/flightScheduleService';
-import { SeatInventoryService } from '../services/seatInventoryService';
+import { FlightScheduleService } from '../services/hayatFlightScheduleService';
+import { SeatInventoryService } from '../services/hayatSeatInventoryService';
 import { logger } from '../utils/logger';
 
 const flightScheduleService = new FlightScheduleService();

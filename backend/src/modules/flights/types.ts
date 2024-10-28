@@ -5,31 +5,21 @@ export interface FlightSearchParams {
   returnDate?: string;
   passengers: number;
   cabinClass?: string;
-  // New fields for advanced filtering
+  // Fields for advanced filtering
   minPrice?: number;
   maxPrice?: number;
   airlines?: string[];
-  departureTimeRange?: {
-    start: string; // HH:mm format
-    end: string; // HH:mm format
-  };
-  arrivalTimeRange?: {
-    start: string; // HH:mm format
-    end: string; // HH:mm format
-  };
+  departureTimeRange?: TimeRange;
+  arrivalTimeRange?: TimeRange;
   maxStops?: number;
   preferredAirlines?: string[];
-  // New fields for dynamic filters
+  // Fields for dynamic filters
   flightClass?: string[];
   priceRange?: {
     min: number;
     max: number;
   };
-  departureTimeRange?: TimeRange;
-  arrivalTimeRange?: TimeRange;
-  airlines?: string[];
   maxLayoverDuration?: number; // in minutes
-  maxStops?: number;
   fareConditions?: string[];
   userPreferences?: UserPreference;
   tenantId: string;
@@ -102,11 +92,18 @@ export interface Flight {
   departureTime: string;
   arrivalTime: string;
   duration: string;
-  price: Price;
+  price: {
+    amount: number;
+    currency: CurrencyInfo;
+  };
   seatsAvailable: number;
   cabinClass: string;
   layovers: string[];
-  rules: FlightRules;
+  rules: {
+    cancellation: string;
+    changePolicy: string;
+    luggagePolicy: string;
+  };
   supplier: Supplier;
   relevanceScore?: number;
 }

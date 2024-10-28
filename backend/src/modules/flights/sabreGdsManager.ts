@@ -1,6 +1,6 @@
-import { SabreClient } from './sabreClient';
+import { SabreClient } from '../../utils/sabreClient';
 import { FlightSearchParams, StandardizedFlight, FlightStatus, Supplier } from './types';
-import { logger } from '../utils/logger';
+import { logger } from '../../utils/logger';
 
 export class SabreGdsManager {
   private sabreClient: SabreClient;
@@ -13,7 +13,7 @@ export class SabreGdsManager {
     this.supplier = {
       id: 'sabre',
       name: 'Sabre GDS',
-      type: 'GDS'
+      type: 'GDS',
     };
   }
 
@@ -66,6 +66,11 @@ export class SabreGdsManager {
       seatsAvailable: flight.seatsAvailable || 0,
       cabinClass: flight.cabinClass || 'economy',
       layovers: flight.layovers || [],
+      flightClass: flight.flightClass || 'standard', // Default flightClass
+      layoverDuration: flight.layoverDuration || '0h 0m', // Default layoverDuration
+      stops: flight.stops || 0, // Default stops
+      fareConditions: flight.fareConditions || 'Standard fare conditions', // Default fareConditions
+      fareClasses: flight.fareClasses || ['Economy'], // Default fareClasses
       rules: {
         cancellation: flight.cancellationPolicy || 'No information available',
         changePolicy: flight.changePolicy || 'No information available',

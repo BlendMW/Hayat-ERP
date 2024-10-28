@@ -1,5 +1,5 @@
 import { ScheduledHandler } from 'aws-lambda';
-import { FlightStatusPollingService } from '../services/flightStatusPollingService';
+import { FlightStatusPollingService } from '../services/hayatFlightStatusPollingService';
 import { logger } from '../utils/logger';
 
 export const handler: ScheduledHandler = async () => {

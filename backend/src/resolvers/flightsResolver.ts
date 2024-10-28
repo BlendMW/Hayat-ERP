@@ -1,11 +1,16 @@
 import { FlightsModule } from '../modules/flights/flightsModule';
-import { FlightSearchParams, UserPreference, SearchQuery, TenantFilterConfig, ScheduleChangeLog } from '../modules/flights/types';
-import { UserPreferenceService } from '../services/userPreferenceService';
+import { FlightSearchParams, UserPreference, SearchQuery, TenantFilterConfig, ScheduleChangeLog, APIConnection } from '../modules/flights/types';
+import { UserPreferenceService } from '../services/hayatUserPreferenceService';
 import { SearchQueryService } from '../services/searchQueryService';
-import { TenantFilterConfigService } from '../services/tenantFilterConfigService';
+import { TenantFilterConfigService } from '../services/hayatTenantFilterConfigService';
 import { logger } from '../utils/logger';
-import { FlightScheduleService } from '../services/flightScheduleService';
-import { SeatInventoryService } from '../services/seatInventoryService';
+import { FlightScheduleService } from '../services/hayatFlightScheduleService';
+import { SeatInventoryService } from '../services/hayatSeatInventoryService';
+import { IResolvers } from '@graphql-tools/utils';
+
+interface Context {
+    userId: string;
+}
 
 const flightsModule = new FlightsModule();
 const userPreferenceService = new UserPreferenceService();
@@ -14,9 +19,9 @@ const tenantFilterConfigService = new TenantFilterConfigService();
 const flightScheduleService = new FlightScheduleService();
 const seatInventoryService = new SeatInventoryService();
 
-export const flightsResolver = {
+export const flightsResolver: IResolvers<any, Context> = {
   Query: {
-    searchFlights: async (_, { input }) => {
+    searchFlights: async (_: any, { input }: { input: FlightSearchParams }) => {
       try {
         const searchParams: FlightSearchParams = {
           ...input,
@@ -42,33 +47,33 @@ export const flightsResolver = {
         throw new Error('An error occurred while searching for flights');
       }
     },
-    getUserPreferences: async (_, { userId }) => {
+    getUserPreferences: async (_: any, { userId }: { userId: string }) => {
       return userPreferenceService.getUserPreferences(userId);
     },
-    getRecentSearchQueries: async (_, { userId, limit }) => {
+    getRecentSearchQueries: async (_: any, { userId, limit }: { userId: string; limit: number }) => {
       return searchQueryService.getRecentSearchQueries(userId, limit);
     },
     getRegisteredApis: () => {
       return flightsModule.getRegisteredApis();
     },
-    getTenantFilterConfig: async (_, { tenantId }) => {
+    getTenantFilterConfig: async (_: any, { tenantId }: { tenantId: string }) => {
       return tenantFilterConfigService.getFilterConfig(tenantId);
     },
-    getFlightSchedule: async (_, { id }) => {
+    getFlightSchedule: async (_: any, { id }: { id: string }) => {
       return flightScheduleService.getFlightSchedule(id);
     },
-    getSeatAvailability: async (_, { flightScheduleId, date }) => {
+    getSeatAvailability: async (_: any, { flightScheduleId, date }: { flightScheduleId: string; date: string }) => {
       return flightScheduleService.getSeatAvailability(flightScheduleId, date);
     },
-    getSeatInventory: async (_, { flightId, fareClassCode }) => {
+    getSeatInventory: async (_: any, { flightId, fareClassCode }: { flightId: string; fareClassCode: string }) => {
       return seatInventoryService.getSeatInventory(flightId, fareClassCode);
     },
-    getScheduleChangeLogs: async (_, { scheduleId }, { userId }) => {
+    getScheduleChangeLogs: async (_: any, { scheduleId }: { scheduleId: string }, { userId }: Context) => {
       return flightScheduleService.getScheduleChangeLogs(scheduleId);
     },
   },
   Mutation: {
-    updateApiAvailability: async (_, { supplierId, isActive }) => {
+    updateApiAvailability: async (_: any, { supplierId, isActive }: { supplierId: string; isActive: boolean }) => {
       try {
         flightsModule.updateApiAvailability(supplierId, isActive);
         return true;
@@ -77,7 +82,7 @@ export const flightsResolver = {
         return false;
       }
     },
-    updateApiPriority: async (_, { supplierId, priority }) => {
+    updateApiPriority: async (_: any, { supplierId, priority }: { supplierId: string; priority: number }) => {
       try {
         flightsModule.updateApiPriority(supplierId, priority);
         return true;
@@ -86,15 +91,20 @@ export const flightsResolver = {
         return false;
       }
     },
-    registerApiConnection: async (_, { input }) => {
+    registerApiConnection: async (_: any, { input }: { input: { supplierId: string; apiKey: string; baseUrl: string; isActive: boolean; priority: number } }) => {
       try {
-        const connection = {
+        const connection: APIConnection = {
           id: `${input.supplierId}-connection`,
           supplier: { id: input.supplierId, name: '', type: 'AIRLINE' }, // You might want to fetch supplier details from a database
           apiKey: input.apiKey,
           baseUrl: input.baseUrl,
           isActive: input.isActive,
           priority: input.priority,
+          endpoints: {}, // Add appropriate endpoints
+          requestFormat: {}, // Add appropriate request format
+          responseFormat: {}, // Add appropriate response format
+          errorHandling: {}, // Add appropriate error handling
+          supportsRealTimeUpdates: false, // Set this appropriately
         };
         flightsModule.registerApiConnection(connection);
         return true;
@@ -103,34 +113,34 @@ export const flightsResolver = {
         return false;
       }
     },
-    updateUserPreferences: async (_, { userId, preferences }) => {
+    updateUserPreferences: async (_: any, { userId, preferences }: { userId: string; preferences: UserPreference }) => {
       return userPreferenceService.updateUserPreferences(userId, preferences);
     },
-    saveSearchQuery: async (_, { userId, query }) => {
+    saveSearchQuery: async (_: any, { userId, query }: { userId: string; query: SearchQuery }) => {
       return searchQueryService.saveSearchQuery(userId, query);
     },
-    updateTenantFilterConfig: async (_, { config }) => {
+    updateTenantFilterConfig: async (_: any, { config }: { config: TenantFilterConfig }) => {
       await tenantFilterConfigService.updateFilterConfig(config);
       return tenantFilterConfigService.getFilterConfig(config.tenantId);
     },
-    createOrUpdateFlightSchedule: async (_, { schedule }, { userId }) => {
+    createOrUpdateFlightSchedule: async (_: any, { schedule }: { schedule: any }, { userId }: Context) => {
       await flightScheduleService.createOrUpdateFlightSchedule(schedule, userId);
       return schedule;
     },
-    updateFareClasses: async (_, { flightScheduleId, fareClasses }) => {
+    updateFareClasses: async (_: any, { flightScheduleId, fareClasses }: { flightScheduleId: string; fareClasses: any }) => {
       await flightScheduleService.updateFareClasses(flightScheduleId, fareClasses);
       return flightScheduleService.getFlightSchedule(flightScheduleId);
     },
-    updateSeatAvailability: async (_, { flightScheduleId, date, availableSeats }) => {
+    updateSeatAvailability: async (_: any, { flightScheduleId, date, availableSeats }: { flightScheduleId: string; date: string; availableSeats: number }) => {
       const availability = { flightScheduleId, date, availableSeats };
       await flightScheduleService.updateSeatAvailability(availability);
       return availability;
     },
-    updateSeatInventory: async (_, { input }) => {
+    updateSeatInventory: async (_: any, { input }: { input: { flightId: string; fareClassCode: string; [key: string]: any } }) => {
       await flightScheduleService.updateSeatInventory(input.flightId, input.fareClassCode, input);
       return input;
     },
-    deleteFlightSchedule: async (_, { scheduleId }, { userId }) => {
+    deleteFlightSchedule: async (_: any, { scheduleId }: { scheduleId: string }, { userId }: Context) => {
       await flightScheduleService.deleteFlightSchedule(scheduleId, userId);
       return true;
     },

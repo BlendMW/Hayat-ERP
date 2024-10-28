@@ -1,29 +1,35 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
 type HayatTenant = 'hayat_b2c' | 'hayat_b2b' | 'hayat_admin' | 'hayat_b2e';
 
 interface HayatTenantContextType {
   hayatTenant: HayatTenant;
-  setHayatTenant: (tenant: HayatTenant) => void;
+  setHayatTenant: React.Dispatch<React.SetStateAction<HayatTenant>>;
 }
 
 export const HayatTenantContext = createContext<HayatTenantContextType | undefined>(undefined);
 
-export const HayatTenantProvider: React.FC = ({ children }) => {
+interface HayatTenantProviderProps {
+  children: ReactNode;
+}
+
+export const HayatTenantProvider: React.FC<HayatTenantProviderProps> = ({ children }) => {
   const [hayatTenant, setHayatTenant] = useState<HayatTenant>('hayat_b2c');
   const location = useLocation();
 
   useEffect(() => {
-    const determineHayatTenant = (): HayatTenant => {
-      const path = location.pathname;
-      if (path.startsWith('/hayat_b2b')) return 'hayat_b2b';
-      if (path.startsWith('/hayat_admin')) return 'hayat_admin';
-      if (path.startsWith('/hayat_b2e')) return 'hayat_b2e';
-      return 'hayat_b2c';
-    };
-
-    setHayatTenant(determineHayatTenant());
+    // Logic to determine the tenant based on the current route
+    const path = location.pathname;
+    if (path.startsWith('/b2b')) {
+      setHayatTenant('hayat_b2b');
+    } else if (path.startsWith('/admin')) {
+      setHayatTenant('hayat_admin');
+    } else if (path.startsWith('/b2e')) {
+      setHayatTenant('hayat_b2e');
+    } else {
+      setHayatTenant('hayat_b2c');
+    }
   }, [location]);
 
   return (

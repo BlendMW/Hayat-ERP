@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API } from 'aws-amplify';
+// import { API } from 'aws-amplify';
 import { useTranslation } from 'react-i18next';
 import { HayatError } from '../../utils/errorHandling';
 import { HayatMetaSearchResults } from './HayatMetaSearchResults';
@@ -13,6 +13,8 @@ interface Flight {
   arrivalTime: string;
   basePrice: number;
   isCharterFlight: boolean;
+  price: number;
+  provider: string;
 }
 
 export const HayatSearchStep: React.FC = () => {

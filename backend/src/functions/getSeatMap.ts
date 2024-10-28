@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { getSeatMapFromProvider } from '../services/flightService';
+import { getSeatMapFromProvider } from '../services/hayatFlightService';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {

@@ -1,29 +1,29 @@
 import { Request, Response } from 'express';
 import { API } from 'aws-amplify';
-import { CharterFlight } from '../models/CharterFlight';
-import { PricingRule } from '../models/PricingRule';
-import { FlightSource } from '../models/FlightSource';
-import { SourcePriority } from '../models/SourcePriority';
-import { SeatMap } from '../models/SeatMap';
-import { AncillaryService } from '../models/AncillaryService';
-import { broadcastMessage } from '../services/websocketService';
-import { Refund } from '../models/Refund';
-import { FlightPolicy } from '../models/FlightPolicy';
-import { Booking } from '../models/Booking'; // Assuming you have a Booking model
-import { processRefund, createCharge } from '../services/paymentService';
-import { Notification } from '../models/Notification';
-import { CommunicationChannel } from '../models/CommunicationChannel';
-import { createNotification } from '../services/notificationService';
-import { LoyaltyProgram } from '../models/LoyaltyProgram';
-import { User } from '../models/User';
-import { Transaction } from '../models/Transaction';
-import { performMetaSearch } from '../services/metaSearchService';
+import { HayatCharterFlight } from '../models/HayatCharterFlight';
+import { HayatPricingRule } from '../models/HayatPricingRule';
+import { HayatFlightSource } from '../models/HayatFlightSource';
+import { HayatSourcePriority } from '../models/HayatSourcePriority';
+import { HayatSeatMap } from '../models/HayatSeatMap';
+import { HayatAncillaryService } from '../models/HayatAncillaryService';
+import { broadcastMessage } from '../services/hayatWebsocketService';
+import { HayatRefund } from '../models/HayatRefund';
+import { HayatFlightPolicy } from '../models/HayatFlightPolicy';
+import { HayatBooking } from '../models/HayatBooking'; // Assuming you have a Booking model
+import { processRefund, createCharge } from '../services/hayatPaymentService';
+import { HayatNotification } from '../models/HayatNotification';
+import { HayatCommunicationChannel } from '../models/HayatCommunicationChannel';
+import { createNotification } from '../services/hayatNotificationService';
+import { HayatLoyaltyProgram } from '../models/HayatLoyaltyProgram';
+import { HayatUser } from '../models/HayatUser';
+import { HayatTransaction } from '../models/HayatTransaction';
+import { performMetaSearch } from '../services/hayatMetaSearchService';
 import { HayatError } from '../utils/errorHandling';
-import { trackAffiliateClick, trackAffiliateConversion } from '../services/analyticsService';
-import { Tenant } from '../models/Tenant';
-import { Wallet } from '../models/Wallet';
-import { HoldTimer } from '../models/HoldTimer';
-import { sendNotification } from '../services/notificationService';
+import { trackAffiliateClick, trackAffiliateConversion } from '../services/hayatAnalyticsService';
+import { HayatTenant } from '../models/HayatTenant';
+import { HayatWallet } from '../models/HayatWallet';
+import { HayatHoldTimer } from '../models/HayatHoldTimer';
+import { sendNotification } from '../services/hayatNotificationService';
 
 export const hayatSearchFlights = async (req: Request, res: Response) => {
   try {
@@ -49,6 +49,9 @@ export const hayatBulkBookFlights = async (req: Request, res: Response) => {
 
 export const hayatGetCorporateInvoices = async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(400).json({ error: 'User information is missing' });
+    }
     const invoices = await API.get('hayatInvoiceAPI', '/corporate-invoices', {
       queryStringParameters: { tenantId: req.user.attributes['custom:tenant'] }
     });
@@ -61,6 +64,9 @@ export const hayatGetCorporateInvoices = async (req: Request, res: Response) => 
 // Add this method to the existing file
 export const hayatCustomizeDashboard = async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(400).json({ error: 'User information is missing' });
+    }
     const { logo, colors } = req.body;
     const tenantId = req.user.attributes['custom:tenant'];
     
@@ -75,72 +81,88 @@ export const hayatCustomizeDashboard = async (req: Request, res: Response) => {
 };
 
 export class HayatB2bCorporateController {
-  async createCharterFlight(flightData: Partial<CharterFlight>) {
-    const newFlight = await CharterFlight.create(flightData);
+  async createCharterFlight(flightData: Partial<HayatCharterFlight>) {
+    const newFlight = new HayatCharterFlight(flightData); // Create a new instance
+    await newFlight.save(); // Save the instance
     return newFlight;
   }
 
-  async updateCharterFlight(id: string, flightData: Partial<CharterFlight>) {
-    const flight = await CharterFlight.get(id);
+  async updateCharterFlight(id: string, flightData: Partial<HayatCharterFlight>) {
+    const flight = await HayatCharterFlight.get(id);
+    if (!flight) {
+      throw new Error('Flight not found');
+    }
     Object.assign(flight, flightData);
     await flight.save();
     return flight;
   }
 
-  async createPricingRule(ruleData: Partial<PricingRule>) {
-    const newRule = await PricingRule.create(ruleData);
+  async createPricingRule(ruleData: Partial<HayatPricingRule>) {
+    const newRule = new HayatPricingRule(ruleData); // Create a new instance
+    await newRule.save(); // Save the instance
     return newRule;
   }
 
-  async updatePricingRule(id: string, ruleData: Partial<PricingRule>) {
-    const rule = await PricingRule.get(id);
+  async updatePricingRule(id: string, ruleData: Partial<HayatPricingRule>) {
+    const rule = await HayatPricingRule.get(id);
+    if (!rule) {
+      throw new Error('Rule not found');
+    }
     Object.assign(rule, ruleData);
     await rule.save();
     return rule;
   }
 
   async getCharterFlights() {
-    const flights = await CharterFlight.scan();
+    const flights = await HayatCharterFlight.scan();
     return flights;
   }
 
   async getPricingRules(charterFlightId: string) {
-    const rules = await PricingRule.query(charterFlightId);
+    const rules = await HayatPricingRule.query(charterFlightId);
     return rules;
   }
 
   async getFlightSources() {
-    const sources = await FlightSource.scan();
+    const sources = await HayatFlightSource.scan();
     return sources;
   }
 
-  async createFlightSource(sourceData: Partial<FlightSource>) {
-    const newSource = await FlightSource.create(sourceData);
+  async createFlightSource(sourceData: Partial<HayatFlightSource>) {
+    const newSource = new HayatFlightSource(sourceData); // Create a new instance
+    await newSource.save(); // Save the instance
     return newSource;
   }
 
-  async updateFlightSource(id: string, sourceData: Partial<FlightSource>) {
-    const source = await FlightSource.get(id);
+  async updateFlightSource(id: string, sourceData: Partial<HayatFlightSource>) {
+    const source = await HayatFlightSource.get(id);
+    if (!source) {
+      throw new Error('Source not found');
+    }
     Object.assign(source, sourceData);
     await source.save();
     return source;
   }
 
   async getSourcePriorities(tenantId: string) {
-    const priorities = await SourcePriority.query(tenantId);
+    const priorities = await HayatSourcePriority.query(tenantId);
     return priorities;
   }
 
-  async createSourcePriority(priorityData: Partial<SourcePriority>) {
-    const newPriority = await SourcePriority.create(priorityData);
+  async createSourcePriority(priorityData: Partial<HayatSourcePriority>) {
+    const newPriority = new HayatSourcePriority(priorityData); // Create a new instance
+    await newPriority.save(); // Save the instance
     return newPriority;
   }
 
-  async updateSourcePriority(id: string, priorityData: Partial<SourcePriority>) {
-    const priority = await SourcePriority.get(id);
+  async updateSourcePriority(id: string, priorityData: Partial<HayatSourcePriority>) {
+    const priorities = await HayatSourcePriority.query(id); // Pass id directly as a string
+    if (priorities.length === 0) {
+      throw new Error('Priority not found');
+    }
+    const priority = priorities[0];
     Object.assign(priority, priorityData);
     await priority.save();
-    return priority;
   }
 
   async searchFlights(searchParams: any, tenantId: string, userId?: string) {
@@ -148,9 +170,8 @@ export class HayatB2bCorporateController {
     const userPriorities = userId ? sourcePriorities.filter(p => p.userId === userId) : [];
     const tenantPriorities = sourcePriorities.filter(p => !p.userId);
 
-    const prioritizedSources = this.getPrioritizedSources(userPriorities, tenantPriorities);
-
-    let flights = [];
+    const prioritizedSources = await this.getPrioritizedSources(userPriorities, tenantPriorities); // Await the promise
+    let flights: any[] = []; // Specify the type of the array
     for (const source of prioritizedSources) {
       const sourceFlights = await this.searchFlightsFromSource(source, searchParams);
       flights = [...flights, ...sourceFlights];
@@ -160,17 +181,17 @@ export class HayatB2bCorporateController {
     return flights;
   }
 
-  private getPrioritizedSources(userPriorities: SourcePriority[], tenantPriorities: SourcePriority[]): FlightSource[] {
+  private async getPrioritizedSources(userPriorities: HayatSourcePriority[], tenantPriorities: HayatSourcePriority[]): Promise<HayatFlightSource[]> {
     const priorityMap = new Map<string, number>();
     
     tenantPriorities.forEach(p => priorityMap.set(p.sourceId, p.priority));
     userPriorities.forEach(p => priorityMap.set(p.sourceId, p.priority)); // User priorities override tenant priorities
 
-    const sources = await FlightSource.scan({ filter: { isActive: { eq: true } } });
+    const sources = await HayatFlightSource.scan({ filter: { isActive: { eq: true } } });
     return sources.sort((a, b) => (priorityMap.get(b.id) || 0) - (priorityMap.get(a.id) || 0));
   }
 
-  private async searchFlightsFromSource(source: FlightSource, searchParams: any) {
+  private async searchFlightsFromSource(source: HayatFlightSource, searchParams: any): Promise<any[]> {
     // Implement the logic to search flights from a specific source
     // This could involve calling different APIs or services based on the source type
     switch (source.type) {
@@ -181,30 +202,33 @@ export class HayatB2bCorporateController {
       case 'AGGREGATOR':
         return this.searchAggregator(source, searchParams);
       default:
-        return [];
+        return []; // Ensure an empty array is returned by default
     }
   }
 
   // Implement methods for searching different source types
-  private async searchDirectApi(source: FlightSource, searchParams: any) {
+  private async searchDirectApi(source: HayatFlightSource, searchParams: any): Promise<any[]> {
     // Implement direct API search
+    return []; // Ensure an array is returned
   }
 
-  private async searchGDS(source: FlightSource, searchParams: any) {
+  private async searchGDS(source: HayatFlightSource, searchParams: any): Promise<any[]> {
     // Implement GDS search
+    return []; // Ensure an array is returned
   }
 
-  private async searchAggregator(source: FlightSource, searchParams: any) {
+  private async searchAggregator(source: HayatFlightSource, searchParams: any): Promise<any[]> {
     // Implement aggregator search
+    return []; // Ensure an array is returned
   }
 
   async getSeatMap(flightId: string) {
-    const seatMap = await SeatMap.query(flightId);
+    const seatMap = await HayatSeatMap.query(flightId);
     return seatMap[0]; // Assuming one seat map per flight
   }
 
-  async updateSeatMap(flightId: string, seatMapData: Partial<SeatMap>) {
-    const seatMap = await SeatMap.query(flightId);
+  async updateSeatMap(flightId: string, seatMapData: Partial<HayatSeatMap>) {
+    const seatMap = await HayatSeatMap.query(flightId);
     if (seatMap.length > 0) {
       Object.assign(seatMap[0], seatMapData);
       await seatMap[0].save();
@@ -215,18 +239,22 @@ export class HayatB2bCorporateController {
 
   async getAncillaryServices(flightId?: string) {
     if (flightId) {
-      return AncillaryService.query(flightId);
+      return HayatAncillaryService.query(flightId);
     }
-    return AncillaryService.scan();
+    return HayatAncillaryService.scan();
   }
 
-  async createAncillaryService(serviceData: Partial<AncillaryService>) {
-    const newService = await AncillaryService.create(serviceData);
+  async createAncillaryService(serviceData: Partial<HayatAncillaryService>) {
+    const newService = new HayatAncillaryService(serviceData); // Create a new instance
+    await newService.save(); // Save the instance
     return newService;
   }
 
-  async updateAncillaryService(id: string, serviceData: Partial<AncillaryService>) {
-    const service = await AncillaryService.get(id);
+  async updateAncillaryService(id: string, serviceData: Partial<HayatAncillaryService>) {
+    const service = await HayatAncillaryService.get(id);
+    if (!service) {
+      throw new Error('Service not found');
+    }
     Object.assign(service, serviceData);
     await service.save();
     return service;
@@ -261,15 +289,22 @@ export class HayatB2bCorporateController {
   private async getFlightConnections(flightId: string): Promise<string[]> {
     // Implement logic to get all WebSocket connections for a specific flight
     // This could be stored in a database or in-memory cache
+    return []; // Return an empty array as a placeholder
   }
 
   async getBooking(bookingId: string) {
-    return Booking.get(bookingId);
+    return HayatBooking.get(bookingId);
   }
 
   async modifyBooking(bookingId: string, modificationData: any) {
     const booking = await this.getBooking(bookingId);
-    const policy = await this.getFlightPolicy(booking.flightId);
+    if (!booking) {
+      throw new Error('Booking not found');
+    }
+    const policy = await HayatFlightPolicy.get(booking.flightId);
+    if (!policy) {
+      throw new Error('Flight policy not found');
+    }
     
     // Check if modification is allowed
     if (!this.isModificationAllowed(booking, policy)) {
@@ -293,11 +328,12 @@ export class HayatB2bCorporateController {
 
   async cancelBooking(bookingId: string) {
     const booking = await this.getBooking(bookingId);
+    if (!booking) {
+      throw new Error('Booking not found');
+    }
     const policy = await this.getFlightPolicy(booking.flightId);
-
-    // Check if cancellation is allowed
-    if (!this.isCancellationAllowed(booking, policy)) {
-      throw new Error('Cancellation not allowed for this booking');
+    if (!policy) {
+      throw new Error('Flight policy not found');
     }
 
     // Calculate refund amount
@@ -314,28 +350,44 @@ export class HayatB2bCorporateController {
   }
 
   async getFlightPolicy(flightId: string) {
-    return FlightPolicy.get(flightId);
+    return HayatFlightPolicy.get(flightId);
   }
 
-  private isModificationAllowed(booking: Booking, policy: FlightPolicy) {
+  async createFlightPolicy(policyData: Partial<HayatFlightPolicy>) {
+    const newPolicy = new HayatFlightPolicy(policyData); // Create a new instance
+    await newPolicy.save(); // Save the instance
+    return newPolicy;
+  }
+
+  async updateFlightPolicy(id: string, policyData: Partial<HayatFlightPolicy>) {
+    const policy = await HayatFlightPolicy.get(id);
+    if (!policy) {
+      throw new Error('Policy not found');
+    }
+    Object.assign(policy, policyData);
+    await policy.save();
+    return policy;
+  }
+
+  private isModificationAllowed(booking: HayatBooking, policy: HayatFlightPolicy) {
     const now = new Date();
     const departureTime = new Date(booking.departureTime);
     const hoursUntilDeparture = (departureTime.getTime() - now.getTime()) / (1000 * 60 * 60);
     return hoursUntilDeparture >= policy.deadlineHours;
   }
 
-  private isCancellationAllowed(booking: Booking, policy: FlightPolicy) {
+  private isCancellationAllowed(booking: HayatBooking, policy: HayatFlightPolicy) {
     return policy.isRefundable || this.isModificationAllowed(booking, policy);
   }
 
-  private calculateModificationFee(booking: Booking, policy: FlightPolicy) {
+  private calculateModificationFee(booking: HayatBooking, policy: HayatFlightPolicy) {
     if (this.isModificationAllowed(booking, policy)) {
       return 0;
     }
     return policy.modificationFee;
   }
 
-  private calculateRefundAmount(booking: Booking, policy: FlightPolicy) {
+  private calculateRefundAmount(booking: HayatBooking, policy: HayatFlightPolicy) {
     if (!policy.isRefundable) {
       return 0;
     }
@@ -345,8 +397,8 @@ export class HayatB2bCorporateController {
     return Math.max(0, booking.totalPrice - policy.cancellationFee);
   }
 
-  private async processRefund(booking: Booking, amount: number) {
-    const refund = await Refund.create({
+  private async processRefund(booking: HayatBooking, amount: number) {
+    const refund = new HayatRefund({
       bookingId: booking.id,
       amount,
       status: 'PENDING',
@@ -380,19 +432,22 @@ export class HayatB2bCorporateController {
   }
 
   async getNotifications(userId: string) {
-    return Notification.query(userId);
+    return HayatNotification.query(userId);
   }
 
   async getCommunicationChannels(userId: string) {
-    return CommunicationChannel.query(userId);
+    return HayatCommunicationChannel.query(userId);
   }
 
-  async createCommunicationChannel(channelData: Partial<CommunicationChannel>) {
-    return CommunicationChannel.create(channelData);
+  async createCommunicationChannel(channelData: Partial<HayatCommunicationChannel>) {
+    return HayatCommunicationChannel.create(channelData);
   }
 
-  async updateCommunicationChannel(id: string, channelData: Partial<CommunicationChannel>) {
-    const channel = await CommunicationChannel.get(id);
+  async updateCommunicationChannel(id: string, channelData: Partial<HayatCommunicationChannel>) {
+    const channel = await HayatCommunicationChannel.get(id);
+    if (!channel) {
+      throw new Error('Channel not found');
+    }
     Object.assign(channel, channelData);
     await channel.save();
     return channel;
@@ -405,6 +460,9 @@ export class HayatB2bCorporateController {
   // Add this method to handle booking confirmations
   async sendBookingConfirmation(bookingId: string) {
     const booking = await this.getBooking(bookingId);
+    if (!booking) {
+      throw new HayatError('Booking not found', 404);
+    }
     const user = await this.getUser(booking.userId);
     const channel = await this.getDefaultCommunicationChannel(user.id);
 
@@ -415,12 +473,12 @@ export class HayatB2bCorporateController {
   // Add more methods for other types of notifications (e.g., flight updates, reminders)
 
   async getLoyaltyProgram(tenantId: string) {
-    const programs = await LoyaltyProgram.query(tenantId);
+    const programs = await HayatLoyaltyProgram.query(tenantId);
     return programs[0]; // Assuming one program per tenant
   }
 
-  async updateLoyaltyProgram(tenantId: string, programData: Partial<LoyaltyProgram>) {
-    const programs = await LoyaltyProgram.query(tenantId);
+  async updateLoyaltyProgram(tenantId: string, programData: Partial<HayatLoyaltyProgram>) {
+    const programs = await HayatLoyaltyProgram.query(tenantId);
     if (programs.length > 0) {
       Object.assign(programs[0], programData);
       await programs[0].save();
@@ -430,8 +488,8 @@ export class HayatB2bCorporateController {
   }
 
   async getUserLoyaltyPoints(userId: string) {
-    const user = await User.get(userId);
-    const transactions = await Transaction.query(userId);
+    const user = await HayatUser.get(userId);
+    const transactions = await HayatTransaction.query({ userId }); // Pass an object with userId
     
     const now = new Date();
     let activePoints = 0;
@@ -442,6 +500,9 @@ export class HayatB2bCorporateController {
       }
     }
 
+    if (!user) {
+      throw new Error('User not found');
+    }
     user.loyaltyPoints = activePoints;
     await user.save();
 
@@ -449,7 +510,10 @@ export class HayatB2bCorporateController {
   }
 
   async addLoyaltyPoints(userId: string, bookingId: string, amount: number) {
-    const user = await User.get(userId);
+    const user = await HayatUser.get(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
     const program = await this.getLoyaltyProgram(user.tenantId);
     
     const points = Math.floor(amount * program.pointsPerCurrency);
@@ -459,7 +523,7 @@ export class HayatB2bCorporateController {
     const expirationDate = new Date();
     expirationDate.setMonth(expirationDate.getMonth() + program.expirationMonths);
 
-    await Transaction.create({
+    const transaction = new HayatTransaction({
       userId,
       type: 'EARN',
       points,
@@ -468,12 +532,16 @@ export class HayatB2bCorporateController {
       createdAt: new Date().toISOString(),
       expiresAt: expirationDate.toISOString(),
     });
+    await transaction.save();
 
     return points;
   }
 
   async redeemLoyaltyPoints(userId: string, points: number, description: string) {
-    const user = await User.get(userId);
+    const user = await HayatUser.get(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
     if (user.loyaltyPoints < points) {
       throw new Error('Insufficient points');
     }
@@ -481,7 +549,7 @@ export class HayatB2bCorporateController {
     user.loyaltyPoints -= points;
     await user.save();
 
-    await Transaction.create({
+    await HayatTransaction.create({
       userId,
       type: 'REDEEM',
       points: -points,
@@ -494,12 +562,13 @@ export class HayatB2bCorporateController {
   }
 
   async getLoyaltyTransactions(userId: string) {
-    return Transaction.query(userId);
+    return HayatTransaction.query({ userId }); // Pass an object with userId
   }
 
-  async performMetaSearch(searchParams: any) {
+  async performMetaSearch(searchParams: any, tenantId: string) {
     try {
-      const internalResults = await this.searchFlights(searchParams);
+      // Pass tenantId when calling searchFlights
+      const internalResults = await this.searchFlights(searchParams, tenantId);
       const externalResults = await performMetaSearch(searchParams);
       return {
         internal: internalResults,
@@ -513,6 +582,7 @@ export class HayatB2bCorporateController {
       throw new HayatError('An error occurred while performing the meta-search', 500);
     }
   }
+  
 
   async trackAffiliateClick(userId: string, metaSearchResultId: string, providerId: string) {
     await trackAffiliateClick(userId, metaSearchResultId, providerId);
@@ -523,22 +593,25 @@ export class HayatB2bCorporateController {
   }
 
   async getTenant(tenantId: string) {
-    return Tenant.get(tenantId);
+    return HayatTenant.get(tenantId);
   }
 
-  async updateTenant(tenantId: string, tenantData: Partial<Tenant>) {
-    const tenant = await Tenant.get(tenantId);
+  async updateTenant(tenantId: string, tenantData: Partial<HayatTenant>) {
+    const tenant = await HayatTenant.get(tenantId);
+    if (!tenant) {
+      throw new Error('Tenant not found');
+    }
     Object.assign(tenant, tenantData);
     await tenant.save();
     return tenant;
   }
 
   async getWallet(tenantId: string) {
-    const wallets = await Wallet.query(tenantId);
+    const wallets = await HayatWallet.query(tenantId);
     return wallets[0]; // Assuming one wallet per tenant
   }
 
-  async updateWallet(tenantId: string, walletData: Partial<Wallet>) {
+  async updateWallet(tenantId: string, walletData: Partial<HayatWallet>) {
     const wallet = await this.getWallet(tenantId);
     Object.assign(wallet, walletData);
     await wallet.save();
@@ -556,8 +629,9 @@ export class HayatB2bCorporateController {
       throw new Error('Insufficient credit');
     }
 
-    // Proceed with booking creation
-    // ... existing booking creation logic
+    // Create a new booking instance
+    const booking = new HayatBooking(bookingData);
+    await booking.save(); // Save the booking instance
 
     // Update wallet balance
     const wallet = await this.getWallet(tenantId);
@@ -568,18 +642,19 @@ export class HayatB2bCorporateController {
   }
 
   async reserveFlight(userId: string, flightId: string, holdDurationMinutes: number = 30) {
-    const booking = await Booking.create({
+    const booking = new HayatBooking({
       userId,
       flightId,
       status: 'RESERVED',
       holdExpiresAt: new Date(Date.now() + holdDurationMinutes * 60000).toISOString(),
     });
+    await booking.save(); // Save the new booking instance
 
-    await HoldTimer.create({
+    const holdTimer = new HayatHoldTimer({
       bookingId: booking.id,
       expiresAt: booking.holdExpiresAt,
     });
-
+    await holdTimer.save(); // Save the new hold timer instance
     // Schedule a notification for 5 minutes before expiration
     const notificationTime = new Date(booking.holdExpiresAt);
     notificationTime.setMinutes(notificationTime.getMinutes() - 5);
@@ -589,7 +664,10 @@ export class HayatB2bCorporateController {
   }
 
   async confirmBooking(bookingId: string) {
-    const booking = await Booking.get(bookingId);
+    const booking = await HayatBooking.get(bookingId);
+    if (!booking) {
+      throw new HayatError('Booking not found', 404);
+    }
     if (booking.status !== 'RESERVED' || new Date(booking.holdExpiresAt) < new Date()) {
       throw new HayatError('Booking hold has expired', 400);
     }
@@ -598,7 +676,7 @@ export class HayatB2bCorporateController {
     await booking.save();
 
     // Remove the hold timer
-    const holdTimer = await HoldTimer.query(bookingId);
+    const holdTimer = await HayatHoldTimer.query(bookingId);
     if (holdTimer.length > 0) {
       await holdTimer[0].delete();
     }
@@ -607,7 +685,10 @@ export class HayatB2bCorporateController {
   }
 
   async cancelReservation(bookingId: string) {
-    const booking = await Booking.get(bookingId);
+    const booking = await HayatBooking.get(bookingId);
+    if (!booking) {
+      throw new HayatError('Booking not found', 404);
+    }
     if (booking.status !== 'RESERVED') {
       throw new HayatError('Booking is not in a reserved state', 400);
     }
@@ -616,7 +697,7 @@ export class HayatB2bCorporateController {
     await booking.save();
 
     // Remove the hold timer
-    const holdTimer = await HoldTimer.query(bookingId);
+    const holdTimer = await HayatHoldTimer.query(bookingId);
     if (holdTimer.length > 0) {
       await holdTimer[0].delete();
     }
@@ -625,25 +706,46 @@ export class HayatB2bCorporateController {
   }
 
   async getUserReservations(userId: string) {
-    return Booking.query(userId, {
-      filter: {
-        status: { eq: 'RESERVED' },
-      },
-    });
+    const reservations = await HayatBooking.query(userId);
+    return reservations.filter(booking => booking.status === 'RESERVED');
   }
 
   private async scheduleHoldExpirationNotification(bookingId: string, notificationTime: Date) {
-    const booking = await Booking.get(bookingId);
-    const user = await User.get(booking.userId);
-    const flight = await Flight.get(booking.flightId);
+    const booking = await HayatBooking.get(bookingId);
+    if (!booking) {
+      throw new HayatError('Booking not found', 404);
+    }
+    const user = await this.getUser(booking.userId);
+    const flight = await this.getFlight(booking.flightId);
 
     // Create a notification record
-    await Notification.create({
+    await HayatNotification.create({
       userId: user.id,
       type: 'HOLD_EXPIRATION',
       content: `Your hold for flight ${flight.flightNumber} will expire in 5 minutes.`,
       status: 'PENDING',
       scheduledFor: notificationTime.toISOString(),
     });
+  }
+
+  private async getUser(userId: string): Promise<HayatUser> {
+    const user = await HayatUser.get(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  private async getDefaultCommunicationChannel(userId: string): Promise<HayatCommunicationChannel> {
+    const channels = await HayatCommunicationChannel.scan({ filter: { userId: { eq: userId } } });
+    return channels.find(channel => channel.isActive) || channels[0];
+  }
+
+  private async getFlight(flightId: string): Promise<HayatCharterFlight> {
+    const flight = await HayatCharterFlight.get(flightId);
+    if (!flight) {
+      throw new Error('Flight not found');
+    }
+    return flight;
   }
 }

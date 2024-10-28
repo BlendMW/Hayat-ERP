@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { API } from 'aws-amplify';
+// import { API } from 'aws-amplify';
 import { useTranslation } from 'react-i18next';
 
+interface Flight {
+  id: string;
+  // Add other properties as needed
+}
+
 export const HayatCharterFlightManager: React.FC = () => {
-  const [charterFlights, setCharterFlights] = useState([]);
+  const [charterFlights, setCharterFlights] = useState<Flight[]>([]);
   const [pricingRules, setPricingRules] = useState([]);
-  const [selectedFlight, setSelectedFlight] = useState(null);
+  const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -21,7 +26,7 @@ export const HayatCharterFlightManager: React.FC = () => {
     }
   };
 
-  const fetchPricingRules = async (flightId) => {
+  const fetchPricingRules = async (flightId: string) => {
     try {
       const rules = await API.get('hayatApi', `/pricing-rules/${flightId}`, {});
       setPricingRules(rules);
@@ -30,12 +35,12 @@ export const HayatCharterFlightManager: React.FC = () => {
     }
   };
 
-  const handleFlightSelect = (flight) => {
+  const handleFlightSelect = (flight: any) => {
     setSelectedFlight(flight);
     fetchPricingRules(flight.id);
   };
 
-  const handleCreateFlight = async (flightData) => {
+  const handleCreateFlight = async (flightData: any) => {
     try {
       await API.post('hayatApi', '/charter-flights', { body: flightData });
       fetchCharterFlights();
@@ -44,7 +49,7 @@ export const HayatCharterFlightManager: React.FC = () => {
     }
   };
 
-  const handleUpdateFlight = async (flightId, flightData) => {
+  const handleUpdateFlight = async (flightId: string, flightData: any) => {
     try {
       await API.put('hayatApi', `/charter-flights/${flightId}`, { body: flightData });
       fetchCharterFlights();
@@ -53,19 +58,23 @@ export const HayatCharterFlightManager: React.FC = () => {
     }
   };
 
-  const handleCreatePricingRule = async (ruleData) => {
+  const handleCreatePricingRule = async (ruleData: any) => {
     try {
       await API.post('hayatApi', '/pricing-rules', { body: ruleData });
-      fetchPricingRules(selectedFlight.id);
+      if (selectedFlight) {
+        fetchPricingRules(selectedFlight.id);
+      }
     } catch (error) {
       console.error('Error creating pricing rule:', error);
     }
   };
 
-  const handleUpdatePricingRule = async (ruleId, ruleData) => {
+  const handleUpdatePricingRule = async (ruleId: string, ruleData: any) => {
     try {
       await API.put('hayatApi', `/pricing-rules/${ruleId}`, { body: ruleData });
-      fetchPricingRules(selectedFlight.id);
+      if (selectedFlight) {
+        fetchPricingRules(selectedFlight.id);
+      }
     } catch (error) {
       console.error('Error updating pricing rule:', error);
     }
