@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 type HayatTenant = 'hayat_b2c' | 'hayat_b2b' | 'hayat_admin' | 'hayat_b2e';
 
@@ -16,7 +16,7 @@ interface HayatTenantProviderProps {
 
 export const HayatTenantProvider: React.FC<HayatTenantProviderProps> = ({ children }) => {
   const [hayatTenant, setHayatTenant] = useState<HayatTenant>('hayat_b2c');
-  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Logic to determine the tenant based on the current route

@@ -1,7 +1,11 @@
-export class HayatAncillaryService {
+import { Model } from '@aws-amplify/datastore';
+
+export class HayatAncillaryService extends Model {
   static classType = 'AncillaryService';
 
   constructor(init: Partial<HayatAncillaryService>) {
+    super(init);
+    Object.assign(this, init);
   }
 
   async save(): Promise<void> {

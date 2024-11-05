@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import HayatApp from './HayatApp';
+import './App.tsx';
 
 // Create root element if it doesn't exist
 const rootElement = document.createElement('div');
