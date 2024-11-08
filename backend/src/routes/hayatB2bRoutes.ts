@@ -1,15 +1,24 @@
-import express from 'express';
+import { Router } from 'express';
 import { hayatAuthenticate, hayatAuthorize } from '../hayatMiddleware/hayatAuth';
 import { hayatSearchFlights, hayatBookFlight, hayatManageAccount } from '../hayatControllers/hayatB2bController';
 
-const hayatRouter = express.Router();
+const router = Router();
 
-// HayatB2BRoutes: Routes for Hayat B2B portal
-hayatRouter.use(hayatAuthenticate);
-hayatRouter.use(hayatAuthorize(['b2b']));
+// Search flights - requires authentication
+router.get('/flights', hayatAuthenticate, hayatSearchFlights);
 
-hayatRouter.post('/search', hayatSearchFlights);
-hayatRouter.post('/book', hayatBookFlight);
-hayatRouter.get('/manage', hayatManageAccount);
+// Book flight - requires authentication and B2B role
+router.post('/bookings', 
+  hayatAuthenticate, 
+  hayatAuthorize(['B2B_USER', 'B2B_ADMIN']), 
+  hayatBookFlight
+);
 
-export default hayatRouter;
+// Manage account - requires authentication and admin role
+router.put('/account', 
+  hayatAuthenticate, 
+  hayatAuthorize(['B2B_ADMIN']), 
+  hayatManageAccount
+);
+
+export default router;
