@@ -1,18 +1,134 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any unauthenticated user can "create", "read", "update", 
-and "delete" any "Todo" records.
-=========================================================================*/
 const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-      isDone: a.boolean(),
-    })
-    .authorization((allow) => [allow.guest()]),
+  // Flight related models
+  Flight: a.model({
+    flightNumber: a.string(),
+    departureTime: a.string(),
+    arrivalTime: a.string(),
+    origin: a.string(),
+    destination: a.string(),
+    availableSeats: a.integer(),
+    basePrice: a.float(),
+    status: a.string(),
+    isCharterFlight: a.boolean(),
+  }).authorization((rules) => [
+    rules.authenticated().to(['read']),
+    rules.owner().to(['create', 'update', 'delete'])
+  ]),
+
+  // Booking related models
+  Booking: a.model({
+    userId: a.string(),
+    flightId: a.string(),
+    status: a.string(),
+    totalPrice: a.float(),
+    holdExpiresAt: a.string(),
+    departureTime: a.string(),
+    reminderSent: a.boolean(),
+  }).authorization((rules) => [
+    rules.owner().to(['read', 'update']),
+    rules.authenticated().to(['create'])
+  ]),
+
+  // Tenant related models
+  Tenant: a.model({
+    name: a.string(),
+    status: a.string(),
+    creditLimit: a.float(),
+    balance: a.float(),
+  }).authorization((rules) => [
+    rules.authenticated().to(['read']),
+    rules.group('TENANT_ADMIN').to(['create', 'update', 'delete'])
+  ]),
+
+  // Loyalty related models
+  LoyaltyProgram: a.model({
+    tenantId: a.string(),
+    pointsPerCurrency: a.float(),
+    expirationMonths: a.integer(),
+  }).authorization((rules) => [
+    rules.authenticated().to(['read']),
+    rules.owner().to(['create', 'update', 'delete'])
+  ]),
+
+  // Transaction related models
+  Transaction: a.model({
+    userId: a.string(),
+    type: a.string(),
+    points: a.integer(),
+    description: a.string(),
+    bookingId: a.string(),
+    expiresAt: a.string(),
+  }).authorization((rules) => [
+    rules.owner().to(['read']),
+    rules.authenticated().to(['create'])
+  ]),
+
+  // Notification related models
+  Notification: a.model({
+    userId: a.string(),
+    type: a.string(),
+    content: a.string(),
+    status: a.string(),
+    scheduledFor: a.string(),
+  }).authorization((rules) => [
+    rules.owner().to(['read']),
+    rules.authenticated().to(['create'])
+  ]),
+
+  User: a.model({
+    email: a.string(),
+    password: a.string(),
+  }).authorization((rules) => [
+    rules.owner().to(['read', 'update']),
+    rules.authenticated().to(['create'])
+  ]),
+
+  TenantUser: a.model({
+    tenantId: a.string(),
+    userId: a.string(),
+  }).authorization((rules) => [
+    rules.authenticated().to(['read']),
+    rules.owner().to(['create', 'delete'])
+  ]),
+
+  TenantAdmin: a.model({
+    tenantId: a.string(),
+    userId: a.string(),
+  }).authorization((rules) => [
+    rules.authenticated().to(['read']),
+    rules.group('TENANT_ADMIN').to(['create', 'delete'])
+  ]),
+
+  B2BUser: a.model({
+    tenantId: a.string(),
+    userId: a.string(),
+  }).authorization((rules) => [
+    rules.authenticated().to(['read']),
+    rules.group('B2B_USER').to(['create', 'delete'])
+  ]),
+
+  B2BAdmin: a.model({
+    tenantId: a.string(),
+    userId: a.string(),
+  }).authorization((rules) => [
+    rules.authenticated().to(['read']),
+    rules.group('B2B_ADMIN').to(['create', 'delete'])
+  ]),
+
+  Guest: a.model({
+    email: a.string(),
+  }).authorization((rules) => [
+    rules.publicApiKey().to(['create', 'read'])
+  ]),
+
+  Admin: a.model({
+    email: a.string(),
+  }).authorization((rules) => [
+    rules.authenticated().to(['read']),
+    rules.group('ADMIN').to(['create', 'update', 'delete'])
+  ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -20,35 +136,9 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'iam',
+    defaultAuthorizationMode: 'userPool',
+    apiKeyAuthorizationMode: {
+      expiresInDays: 30
+    }
   },
 });
-
-/*== STEP 2 ===============================================================
-Go to your frontend source code. From your client-side code, generate a
-Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
-WORK IN THE FRONTEND CODE FILE.)
-
-Using JavaScript or Next.js React Server Components, Middleware, Server 
-Actions or Pages Router? Review how to generate Data clients for those use
-cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
-=========================================================================*/
-
-/*
-"use client"
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
-
-const client = generateClient<Schema>() // use this Data client for CRUDL requests
-*/
-
-/*== STEP 3 ===============================================================
-Fetch records from the database and use them in your frontend component.
-(THIS SNIPPET WILL ONLY WORK IN THE FRONTEND CODE FILE.)
-=========================================================================*/
-
-/* For example, in a React component, you can use this snippet in your
-  function's RETURN statement */
-// const { data: todos } = await client.models.Todo.list()
-
-// return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>

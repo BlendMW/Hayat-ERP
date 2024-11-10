@@ -1,19 +1,32 @@
-import express from 'express';
-import { hayatAuthorize } from '../hayatMiddleware/hayatAuth';
-import {
-  hayatMonitorTenantActivity,
-  hayatManageTenants,
-  hayatViewBookings,
-  hayatGenerateReports
+import { Router } from 'express';
+import { hayatAuthenticate, hayatAuthorize } from '../hayatMiddleware/hayatAuth';
+import { 
+  hayatManageTenants, 
+  hayatManageUsers, 
+  hayatManageFlightSources 
 } from '../hayatControllers/hayatAdminController';
 
-const hayatRouter = express.Router();
+const router = Router();
 
-hayatRouter.use(hayatAuthorize(['admin']));
+// All admin routes require authentication and ADMIN role
+router.use(hayatAuthenticate, hayatAuthorize(['ADMIN']));
 
-hayatRouter.get('/monitor-activity', hayatMonitorTenantActivity);
-hayatRouter.get('/manage-tenants', hayatManageTenants);
-hayatRouter.get('/view-bookings', hayatViewBookings);
-hayatRouter.get('/generate-reports', hayatGenerateReports);
+// Tenant management
+router.get('/tenants', hayatManageTenants);
+router.post('/tenants', hayatManageTenants);
+router.put('/tenants/:id', hayatManageTenants);
+router.delete('/tenants/:id', hayatManageTenants);
 
-export default hayatRouter;
+// User management
+router.get('/users', hayatManageUsers);
+router.post('/users', hayatManageUsers);
+router.put('/users/:id', hayatManageUsers);
+router.delete('/users/:id', hayatManageUsers);
+
+// Flight source management
+router.get('/flight-sources', hayatManageFlightSources);
+router.post('/flight-sources', hayatManageFlightSources);
+router.put('/flight-sources/:id', hayatManageFlightSources);
+router.delete('/flight-sources/:id', hayatManageFlightSources);
+
+export default router;
